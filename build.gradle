@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group 'org.jajaho2'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'junit:junit:4.13.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core
+    implementation group: 'org.jgrapht', name: 'jgrapht-core', version: '1.5.1'
+    // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext
+    implementation group: 'org.jgrapht', name: 'jgrapht-ext', version: '1.5.1'
+    // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-jdk1.5
+    implementation group: 'org.jgrapht', name: 'jgrapht-jdk1.5', version: '0.7.3'
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
