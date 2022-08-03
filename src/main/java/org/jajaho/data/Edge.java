@@ -1,4 +1,4 @@
-package org.jajaho2.data;
+package org.jajaho.data;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 

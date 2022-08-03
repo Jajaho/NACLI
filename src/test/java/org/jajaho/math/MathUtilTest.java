@@ -1,11 +1,11 @@
-package org.jajaho2.math;
+package org.jajaho.math;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.jajaho2.math.MathUtil.determinant;
+import static org.jajaho.math.MathUtil.determinant;
 
-public class MathUtilTest {
+class MathUtilTest {
     double delta = 1e-10;
 
     @Test
@@ -22,5 +22,8 @@ public class MathUtilTest {
         Assert.assertEquals(0.0, determinant(a), delta);
         // double[][] b = {{0, 1},{2, 0}};
         // Assert.assertEquals(0.0, determinant(b), delta);
+    }
+    @Test
+    void cramersRule() {
     }
 }

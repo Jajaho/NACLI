@@ -1,4 +1,4 @@
-package org.jajaho2.data;
+package org.jajaho.data;
 
 import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DirectedWeightedPseudograph;

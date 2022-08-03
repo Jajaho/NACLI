@@ -1,4 +1,4 @@
-package org.jajaho2.data;
+package org.jajaho.data;
 
 public class Vertex {
     private String name;
