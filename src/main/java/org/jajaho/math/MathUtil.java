@@ -25,6 +25,16 @@ public class MathUtil {
         return determinant;
     }
 
+    public static boolean isAxisSymetric(double[][] a) {
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a.length; j++) {
+                if (a[i][j] - a[j][i] > 1e-10)
+                    return false;
+            }
+        }
+        return true;
+    }
+
     private static double[][] deepCopy(double[][] matrix) {
         return java.util.Arrays.stream(matrix).map(el -> el.clone()).toArray($ -> matrix.clone());
     }

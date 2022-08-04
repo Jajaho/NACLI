@@ -43,7 +43,7 @@ public class Main {
             }
 
             if (sc.findInLine(calc) != null) {
-
+                makeSLE(graph);
             }
 
             //System.out.println(sc.findInLine(edge));
@@ -121,35 +121,92 @@ public class Main {
         return false;
     }
 
-    private Tuple<double[][], double[]> makeSLE(DirectedTypeValuePseudograph<Integer> graph) {
+    private static Tuple<double[][], double[]> makeSLE(DirectedTypeValuePseudograph<Integer> graph) {
         int n = graph.edgeSet().size() - 1;
         double[][] a = new double[n][n];
+        // a has to be prefilled with 1.0, touched[][] indicates whether the field has been edited.
+        boolean[][] touched = new boolean[n][n];
         double[] b = new double[n];
 
-        for(double[] row : a)
+        for (double[] row : a)
             Arrays.fill(row, 1.0);
 
         for (Integer vertex : graph.vertexSet()) {
             for (Edge edge : graph.edgesOf(vertex)) {
+
                 switch (graph.getEdgeType(edge)) {
                     case I:
-                        b[graph.getEdgeTarget(edge)] += graph.getEdgeWeight(edge);
-                        b[graph.getEdgeSource(edge)] -= graph.getEdgeWeight(edge);
+                        b[graph.getEdgeTarget(edge) - 1] += graph.getEdgeWeight(edge);
+                        b[graph.getEdgeSource(edge) - 1] -= graph.getEdgeWeight(edge);
                         break;
-                    case R:
+                    case R: {
+                        double g = 1 / graph.getEdgeWeight(edge);
+                        // First nodal in its own row
+                        int row = graph.getEdgeTarget(edge) - 1;
+                        int col = graph.getEdgeTarget(edge) - 1;
+                        a[row][col] *= g;
+                        touched[row][col] = true;
 
-                        break;
-                    case G:
+                        // Second nodal in the row of the first
+                        row = graph.getEdgeTarget(edge) - 1;
+                        col = graph.getEdgeSource(edge) - 1;
+                        a[row][col] *= -g;
+                        touched[row][col] = true;
 
-                        break;
+                        // Second nodal in its own row
+                        row = graph.getEdgeSource(edge) - 1;
+                        col = graph.getEdgeSource(edge) - 1;
+                        a[row][col] *= g;
+                        touched[row][col] = true;
+
+                        // First nodal in the row of the first
+                        row = graph.getEdgeSource(edge) - 1;
+                        col = graph.getEdgeTarget(edge) - 1;
+                        a[row][col] *= -g;
+                        touched[row][col] = true;
+                    }
+                    break;
+                    case G: {
+                        double g = graph.getEdgeWeight(edge);
+                        // First nodal in its own row
+                        int row = graph.getEdgeTarget(edge) - 1;
+                        int col = graph.getEdgeTarget(edge) - 1;
+                        a[row][col] *= g;
+                        touched[row][col] = true;
+
+                        // Second nodal in the row of the first
+                        row = graph.getEdgeTarget(edge) - 1;
+                        col = graph.getEdgeSource(edge) - 1;
+                        a[row][col] *= -g;
+                        touched[row][col] = true;
+
+                        // Second nodal in its own row
+                        row = graph.getEdgeSource(edge) - 1;
+                        col = graph.getEdgeSource(edge) - 1;
+                        a[row][col] *= g;
+                        touched[row][col] = true;
+
+                        // First nodal in the row of the first
+                        row = graph.getEdgeSource(edge) - 1;
+                        col = graph.getEdgeTarget(edge) - 1;
+                        a[row][col] *= -g;
+                        touched[row][col] = true;
+                    }
+                    break;
                     default:
                         System.out.println("EdgeType not supported.");
                         break;
                 }
             }
         }
+        for (int i = 0; i < touched.length; i++) {
+            for (int j = 0; j < touched[0].length; j++) {
+                if (!touched[i][j])
+                    a[i][j] = 0.0;
+            }
+        }
 
-        return null;
+        return new Tuple<double[][], double[]>(a, b);
     }
 
     private static void inputEdge(String input, DirectedTypeValuePseudograph<Integer> graph) {
