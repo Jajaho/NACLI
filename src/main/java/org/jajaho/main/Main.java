@@ -167,19 +167,12 @@ public class Main {
     private static Sle makeSLE(DirectedTypeValuePseudograph<Integer> graph) {
         int n = graph.vertexSet().size() - 1;
         double[][] a = new double[n][n];
-        // a has to be prefilled with 1.0, touched[][] indicates whether the field has been edited.
-        boolean[][] touched = new boolean[n][n];
         double[] b = new double[n];
 
-        for (double[] row : a)
-            Arrays.fill(row, 1.0);
-
         for (Integer vertex : graph.vertexSet()) {
-
             // skip the gnd vertex row
             if (vertex.equals(0))
                 continue;
-
             for (Edge edge : graph.edgesOf(vertex)) {
 
                 switch (graph.getEdgeType(edge)) {
@@ -193,12 +186,12 @@ public class Main {
                         break;
                     case R: {
                         double g = 1 / graph.getEdgeWeight(edge);
-                        addConductanceToMatrix(a, touched, vertex, graph.getOppositeOf(vertex, edge), g);
+                        addConductanceToMatrix(a, vertex, graph.getOppositeOf(vertex, edge), g);
                     }
                     break;
                     case G: {
                         double g = graph.getEdgeWeight(edge);
-                        addConductanceToMatrix(a, touched, vertex, graph.getOppositeOf(vertex, edge), g);
+                        addConductanceToMatrix(a, vertex, graph.getOppositeOf(vertex, edge), g);
                     }
                     break;
                     default:
@@ -207,32 +200,19 @@ public class Main {
                 }
             }
         }
-
-        // cleanup untouched indices
-        for (int i = 0; i < touched.length; i++) {
-            for (int j = 0; j < touched[0].length; j++) {
-                if (!touched[i][j])
-                    a[i][j] = 0.0;
-            }
-        }
-
         return new Sle(a, b);
     }
 
 
-    private static void addConductanceToMatrix(double[][] a, boolean[][] t, Integer firstVertex, Integer secondVertex, double g) {
+    private static void addConductanceToMatrix(double[][] a, Integer firstVertex, Integer secondVertex, double g) {
         firstVertex -= 1;
         secondVertex -= 1;
         if (firstVertex >= 0) {
             // first vertex in its own row
-            a[firstVertex][firstVertex] *= g;
-            t[firstVertex][firstVertex] = true;
-
+            a[firstVertex][firstVertex] += g;
             if (secondVertex >= 0) {
-
                 // other vertex in the first row
-                a[firstVertex][secondVertex] *= -g;
-                t[firstVertex][secondVertex] = true;
+                a[firstVertex][secondVertex] -= g;
             }
         }
     }
