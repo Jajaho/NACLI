@@ -41,8 +41,15 @@ public class DirectedTypeValuePseudograph<V> extends DirectedWeightedPseudograph
         return toStringFromSets(vertexSet(), edgeSet(), getType().isDirected());   // from super.toString()
     }
 
+    public V getOppositeOf(V vertex, Edge edge) {
+        if (getEdgeTarget(edge) == vertex)
+            return getEdgeSource(edge);
+        if (getEdgeSource(edge) == vertex)
+            return getEdgeTarget(edge);
+        return null;
+    }
 
-    public Set<V> getAcylclicVertices() {
+    public Set<V> getAcyclicVertices() {
         CycleDetector cDetect = new CycleDetector(this);
         Set<V> set = new HashSet<>();
 

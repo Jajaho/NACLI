@@ -3,7 +3,8 @@ package org.jajaho.main;
 import org.jajaho.data.Component;
 import org.jajaho.data.DirectedTypeValuePseudograph;
 import org.jajaho.data.Edge;
-import org.jajaho.data.Tuple;
+import org.jajaho.data.Sle;
+import org.jajaho.math.MathUtil;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -37,13 +38,27 @@ public class Main {
                 System.exit(1);
 
             if (sc.findInLine(val) != null) {
-                checkForAcyclicVertices(graph);
-                checkHasSource(graph);
-                continue;
+                validateGraph(graph);
             }
 
             if (sc.findInLine(calc) != null) {
-                makeSLE(graph);
+                if (!validateGraph(graph)) {
+                    System.out.println("Network invalid - calculation aborted.");
+                    continue;
+                }
+                Sle sle = makeSLE(graph);
+                sle.print();
+
+                // Post conversion validation
+                if (!MathUtil.isAxisSymmetric(sle.a)) {
+                    System.out.println("Matrix is not symmetric - calculation aborted.");
+                    continue;
+                }
+                double[] phis = MathUtil.cramersRule(sle.a, sle.b);
+                System.out.println("Voltages at nodals (referenced to nodal 0):");
+                for (int i = 1; i - 1 < phis.length; i++) {
+                    System.out.println("V" + i + "= " + phis[i - 1]);
+                }
             }
 
             //System.out.println(sc.findInLine(edge));
@@ -67,10 +82,28 @@ public class Main {
         System.out.println("To calculate the solution enter: CALC");
     }
 
-    private static void checkForAcyclicVertices(DirectedTypeValuePseudograph<Integer> graph) {
-        Set<Integer> acVertices = graph.getAcylclicVertices();
+    private static boolean validateGraph(DirectedTypeValuePseudograph<Integer> graph) {
+        boolean[] test = new boolean[2];
+        int i = 0;
+
+        test[i++] = checkForAcyclicVertices(graph);
+        test[i++] = checkHasSource(graph);
+        // TODO - Catch self loops
+
+        for (int j = 0; j < test.length; j++) {
+            if (!test[j]) {
+                return false;
+            }
+        }
+        System.out.println("All tests successful.");
+        return true;
+    }
+
+    private static boolean checkForAcyclicVertices(DirectedTypeValuePseudograph<Integer> graph) {
+        Set<Integer> acVertices = graph.getAcyclicVertices();
         if (acVertices.isEmpty()) {
             System.out.println("No floating nodes detected.");
+            return true;
         } else {
             System.out.println("Floating nodes detected: " + acVertices.toString());
             System.out.println("Do you wish to delete them? (YES/NO)");
@@ -81,11 +114,11 @@ public class Main {
                 if (sc.findInLine(yes) != null) {
                     acVertices.forEach(graph::removeVertex);
                     System.out.println("Floating nodes removed.");
-                    break;
+                    return true;
                 }
-                if (sc.findInLine(no) != null)
-                    break;
-                sc.nextLine();
+                if (sc.findInLine(no) != null) {
+                    return false;
+                }
             }
         }
     }
@@ -115,13 +148,14 @@ public class Main {
     private static boolean checkHasSource(DirectedTypeValuePseudograph<Integer> graph) {
         for (Edge edge : graph.edgeSet()) {
             if (graph.getEdgeType(edge).equals(Component.I) || graph.getEdgeType(edge).equals(Component.U))
-                return true;
+                System.out.println("Network has a valid source.");
+            return true;
         }
-        System.out.println("Network has no valid supply");
+        System.out.println("Network has no valid supply.");
         return false;
     }
 
-    private static Tuple<double[][], double[]> makeSLE(DirectedTypeValuePseudograph<Integer> graph) {
+    private static Sle makeSLE(DirectedTypeValuePseudograph<Integer> graph) {
         int n = graph.edgeSet().size() - 1;
         double[][] a = new double[n][n];
         // a has to be prefilled with 1.0, touched[][] indicates whether the field has been edited.
@@ -132,65 +166,28 @@ public class Main {
             Arrays.fill(row, 1.0);
 
         for (Integer vertex : graph.vertexSet()) {
+            // skip the gnd vertex row
+            if (vertex.equals(0))
+                continue;
             for (Edge edge : graph.edgesOf(vertex)) {
 
                 switch (graph.getEdgeType(edge)) {
                     case I:
-                        b[graph.getEdgeTarget(edge) - 1] += graph.getEdgeWeight(edge);
-                        b[graph.getEdgeSource(edge) - 1] -= graph.getEdgeWeight(edge);
+                        if (graph.getEdgeSource(edge).equals(vertex)) {
+                            if (!graph.getEdgeTarget(edge).equals(0))
+                                b[graph.getEdgeTarget(edge) - 1] += graph.getEdgeWeight(edge);
+                            if (!graph.getEdgeSource(edge).equals(0))
+                                b[graph.getEdgeSource(edge) - 1] -= graph.getEdgeWeight(edge);
+                        }
                         break;
                     case R: {
                         double g = 1 / graph.getEdgeWeight(edge);
-                        // First nodal in its own row
-                        int row = graph.getEdgeTarget(edge) - 1;
-                        int col = graph.getEdgeTarget(edge) - 1;
-                        a[row][col] *= g;
-                        touched[row][col] = true;
-
-                        // Second nodal in the row of the first
-                        row = graph.getEdgeTarget(edge) - 1;
-                        col = graph.getEdgeSource(edge) - 1;
-                        a[row][col] *= -g;
-                        touched[row][col] = true;
-
-                        // Second nodal in its own row
-                        row = graph.getEdgeSource(edge) - 1;
-                        col = graph.getEdgeSource(edge) - 1;
-                        a[row][col] *= g;
-                        touched[row][col] = true;
-
-                        // First nodal in the row of the first
-                        row = graph.getEdgeSource(edge) - 1;
-                        col = graph.getEdgeTarget(edge) - 1;
-                        a[row][col] *= -g;
-                        touched[row][col] = true;
+                        addConductanceToMatrix(a, touched, vertex, graph.getOppositeOf(vertex, edge), g);
                     }
                     break;
                     case G: {
                         double g = graph.getEdgeWeight(edge);
-                        // First nodal in its own row
-                        int row = graph.getEdgeTarget(edge) - 1;
-                        int col = graph.getEdgeTarget(edge) - 1;
-                        a[row][col] *= g;
-                        touched[row][col] = true;
-
-                        // Second nodal in the row of the first
-                        row = graph.getEdgeTarget(edge) - 1;
-                        col = graph.getEdgeSource(edge) - 1;
-                        a[row][col] *= -g;
-                        touched[row][col] = true;
-
-                        // Second nodal in its own row
-                        row = graph.getEdgeSource(edge) - 1;
-                        col = graph.getEdgeSource(edge) - 1;
-                        a[row][col] *= g;
-                        touched[row][col] = true;
-
-                        // First nodal in the row of the first
-                        row = graph.getEdgeSource(edge) - 1;
-                        col = graph.getEdgeTarget(edge) - 1;
-                        a[row][col] *= -g;
-                        touched[row][col] = true;
+                        addConductanceToMatrix(a, touched, vertex, graph.getOppositeOf(vertex, edge), g);
                     }
                     break;
                     default:
@@ -199,6 +196,8 @@ public class Main {
                 }
             }
         }
+
+        // cleanup untouched indices
         for (int i = 0; i < touched.length; i++) {
             for (int j = 0; j < touched[0].length; j++) {
                 if (!touched[i][j])
@@ -206,7 +205,25 @@ public class Main {
             }
         }
 
-        return new Tuple<double[][], double[]>(a, b);
+        return new Sle(a, b);
+    }
+
+
+    private static void addConductanceToMatrix(double[][] a, boolean[][] t, Integer firstVertex, Integer secondVertex, double g) {
+        firstVertex -= 1;
+        secondVertex -= 1;
+        if (firstVertex >= 0) {
+            // first vertex in its own row
+            a[firstVertex][firstVertex] *= g;
+            t[firstVertex][firstVertex] = true;
+
+            if (secondVertex >= 0) {
+
+                // other vertex in the first row
+                a[firstVertex][secondVertex] *= -g;
+                t[firstVertex][secondVertex] = true;
+            }
+        }
     }
 
     private static void inputEdge(String input, DirectedTypeValuePseudograph<Integer> graph) {
