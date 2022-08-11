@@ -1,4 +1,4 @@
-package org.jajaho.math;
+package org.jajaho.util;
 
 public class MathUtil {
 

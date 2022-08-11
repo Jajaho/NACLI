@@ -1,12 +1,10 @@
 package org.jajaho.main;
 
-import org.jajaho.data.Component;
-import org.jajaho.data.DirectedTypeValuePseudograph;
-import org.jajaho.data.Edge;
-import org.jajaho.data.Sle;
-import org.jajaho.math.MathUtil;
+import org.jajaho.data.*;
+import org.jajaho.util.GraphUtil;
+import org.jajaho.util.MathUtil;
 
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -18,8 +16,6 @@ public class Main {
 
     // Global Control Patterns
     static Pattern esc = Pattern.compile("(ESC)|(esc)");
-    static Pattern yes = Pattern.compile("[Yy][Ee][Ss]");
-    static Pattern no = Pattern.compile("[Nn][Oo]");
 
     public static void main(String[] args) {
         DirectedTypeValuePseudograph<Integer> graph = new DirectedTypeValuePseudograph<>(Edge.class);
@@ -38,11 +34,11 @@ public class Main {
                 System.exit(1);
 
             if (sc.findInLine(val) != null) {
-                validateGraph(graph);
+                GraphUtil.validateGraph(graph, sc);
             }
 
             if (sc.findInLine(calc) != null) {
-                if (!validateGraph(graph)) {
+                if (!GraphUtil.validateGraph(graph, sc)) {
                     System.out.println("Network invalid - calculation aborted.");
                     continue;
                 }
@@ -69,100 +65,24 @@ public class Main {
     }
 
     private static void printStartupMsg() {
-        System.out.println("Nodal Analysis Command-Line Interface");
+        System.out.println("| \\ ||   /_\\   | __| ||    ||");
+        System.out.println("||\\\\||  //_\\\\  ||__  ||__  ||");
+        System.out.println("|| \\ | //   \\\\ |___| |___| || byJakob");
+        System.out.println("-------------------------------------");
+        System.out.println("Nodal Analysis Command Line Interface");
         System.out.println("");
-        System.out.println("Construct the network by connecting nodes like this:");
-        System.out.println("               1 R 9 2");
-        System.out.println("               ^ ^ ^ ^");
-        System.out.println("Source Nodal  _| | | |_ Target Nodal");
-        System.out.println(" Component Type _| |_ Component Value");
+        System.out.println("Construct the network by connecting nodals like this:");
+        System.out.println("                      1 R 9 2");
+        System.out.println("                      ^ ^ ^ ^");
+        System.out.println("       Source Nodal  _| | | |_ Target Nodal");
+        System.out.println("        Component Type _| |_ Component Value");
         System.out.println("");
         System.out.println("To terminate the program enter: ESC");
         System.out.println("    To validate the graph enter: VAL");
         System.out.println("To calculate the solution enter: CALC");
     }
 
-    private static boolean validateGraph(DirectedTypeValuePseudograph<Integer> graph) {
-        boolean[] test = new boolean[1];
-        int i = 0;
 
-        //test[i++] = checkForAcyclicVertices(graph);
-        test[i++] = checkHasSource(graph);
-        // TODO - Catch self loops
-
-        for (int j = 0; j < test.length; j++) {
-            if (!test[j]) {
-                return false;
-            }
-        }
-        System.out.println("All tests successful.");
-        return true;
-    }
-
-    private static void removeFloatingVertices(DirectedTypeValuePseudograph<Integer> graph) {
-        for (Integer vertex : graph.vertexSet()) {
-            if (graph.edgesOf(vertex).size() < 2) {
-                graph.removeVertex(vertex);
-                removeFloatingVertices(graph);
-            }
-        }
-    }
-
-    private static boolean checkForAcyclicVertices(DirectedTypeValuePseudograph<Integer> graph) {
-        Set<Integer> acVertices = graph.getAcyclicVertices();
-        if (acVertices.isEmpty()) {
-            System.out.println("No floating nodes detected.");
-            return true;
-        } else {
-            System.out.println("Floating nodes detected: " + acVertices.toString());
-            System.out.println("Do you wish to delete them? (YES/NO)");
-            while (true) {
-                if (sc.findInLine(esc) != null)
-                    System.exit(1);
-
-                if (sc.findInLine(yes) != null) {
-                    acVertices.forEach(graph::removeVertex);
-                    System.out.println("Floating nodes removed.");
-                    return true;
-                }
-                if (sc.findInLine(no) != null) {
-                    return false;
-                }
-            }
-        }
-    }
-
-    private static Integer defGndNode(DirectedTypeValuePseudograph<Integer> graph) {
-        Integer gnd;
-        System.out.println("Define GND Nodal.");
-
-        while (true) {
-            Integer res = parseUserInput(Pattern.compile("[0-9]"));
-            if (res == null) {
-                sc.nextLine();
-                continue;
-            }
-
-            if (graph.containsVertex(res)) {
-                gnd = res;
-                break;
-            } else {
-                System.out.println("Nodal not found.");
-            }
-            sc.nextLine();
-        }
-        return gnd;
-    }
-
-    private static boolean checkHasSource(DirectedTypeValuePseudograph<Integer> graph) {
-        for (Edge edge : graph.edgeSet()) {
-            if (graph.getEdgeType(edge).equals(Component.I) || graph.getEdgeType(edge).equals(Component.U))
-                System.out.println("Network has a valid source.");
-            return true;
-        }
-        System.out.println("Network has no valid supply.");
-        return false;
-    }
 
     private static Sle makeSLE(DirectedTypeValuePseudograph<Integer> graph) {
         int n = graph.vertexSet().size() - 1;
@@ -202,7 +122,6 @@ public class Main {
         }
         return new Sle(a, b);
     }
-
 
     private static void addConductanceToMatrix(double[][] a, Integer firstVertex, Integer secondVertex, double g) {
         firstVertex -= 1;
@@ -252,6 +171,28 @@ public class Main {
             res = null;
         }
         return res;
+    }
+
+    private static Integer defGndNode(DirectedTypeValuePseudograph<Integer> graph) {
+        Integer gnd;
+        System.out.println("Define GND Nodal.");
+
+        while (true) {
+            Integer res = parseUserInput(Pattern.compile("[0-9]"));
+            if (res == null) {
+                sc.nextLine();
+                continue;
+            }
+
+            if (graph.containsVertex(res)) {
+                gnd = res;
+                break;
+            } else {
+                System.out.println("Nodal not found.");
+            }
+            sc.nextLine();
+        }
+        return gnd;
     }
 
     private static void testGraph(DirectedTypeValuePseudograph<Integer> graph) {

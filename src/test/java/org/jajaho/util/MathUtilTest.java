@@ -1,9 +1,9 @@
-package org.jajaho.math;
+package org.jajaho.util;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import static org.jajaho.math.MathUtil.determinant;
+import static org.jajaho.util.MathUtil.determinant;
 
 class MathUtilTest {
     double delta = 1e-10;
