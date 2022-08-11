@@ -83,10 +83,10 @@ public class Main {
     }
 
     private static boolean validateGraph(DirectedTypeValuePseudograph<Integer> graph) {
-        boolean[] test = new boolean[2];
+        boolean[] test = new boolean[1];
         int i = 0;
 
-        test[i++] = checkForAcyclicVertices(graph);
+        //test[i++] = checkForAcyclicVertices(graph);
         test[i++] = checkHasSource(graph);
         // TODO - Catch self loops
 
@@ -97,6 +97,15 @@ public class Main {
         }
         System.out.println("All tests successful.");
         return true;
+    }
+
+    private static void removeFloatingVertices(DirectedTypeValuePseudograph<Integer> graph) {
+        for (Integer vertex : graph.vertexSet()) {
+            if (graph.edgesOf(vertex).size() < 2) {
+                graph.removeVertex(vertex);
+                removeFloatingVertices(graph);
+            }
+        }
     }
 
     private static boolean checkForAcyclicVertices(DirectedTypeValuePseudograph<Integer> graph) {
@@ -156,7 +165,7 @@ public class Main {
     }
 
     private static Sle makeSLE(DirectedTypeValuePseudograph<Integer> graph) {
-        int n = graph.edgeSet().size() - 1;
+        int n = graph.vertexSet().size() - 1;
         double[][] a = new double[n][n];
         // a has to be prefilled with 1.0, touched[][] indicates whether the field has been edited.
         boolean[][] touched = new boolean[n][n];
@@ -166,14 +175,16 @@ public class Main {
             Arrays.fill(row, 1.0);
 
         for (Integer vertex : graph.vertexSet()) {
+
             // skip the gnd vertex row
             if (vertex.equals(0))
                 continue;
+
             for (Edge edge : graph.edgesOf(vertex)) {
 
                 switch (graph.getEdgeType(edge)) {
                     case I:
-                        if (graph.getEdgeSource(edge).equals(vertex)) {
+                        if (graph.getEdgeTarget(edge).equals(vertex)) {
                             if (!graph.getEdgeTarget(edge).equals(0))
                                 b[graph.getEdgeTarget(edge) - 1] += graph.getEdgeWeight(edge);
                             if (!graph.getEdgeSource(edge).equals(0))
@@ -191,7 +202,7 @@ public class Main {
                     }
                     break;
                     default:
-                        System.out.println("EdgeType not supported.");
+                        System.out.println("Component not supported.");
                         break;
                 }
             }
