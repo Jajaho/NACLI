@@ -21,10 +21,21 @@ public class Sle {
         }
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < a[0].length; j++) {
-                System.out.print(a[i][j] + " ");
+                System.out.print(toFormatDouble(a[i][j]) + " ");
             }
             System.out.println("| " + b[i]);
         }
+    }
+
+    private static String toFormatDouble(double n) {
+        double absN = Math.abs(n);
+        if (absN > 10e6 || absN < 10e-5) {
+            return String.format("%1.2e", n);
+        }
+        else if (absN < 1) {
+            return String.format("%1.4", n);
+        }
+        return String.format("%7", n);
     }
     /*
     public void setValue1(A a) {
