@@ -56,10 +56,7 @@ public class Main {
                     System.out.println("V" + i + "= " + phis[i - 1]);
                 }
             }
-
-            //System.out.println(sc.findInLine(edge));
             inputEdge(sc.findInLine(edge), graph);
-
             sc.nextLine();
         }
     }
@@ -138,7 +135,7 @@ public class Main {
 
     private static void inputEdge(String input, DirectedTypeValuePseudograph<Integer> graph) {
         if (input == null) {
-            System.out.println("No valid edge detected.");
+            //System.out.println("No valid edge detected.");
             return;
         }
 

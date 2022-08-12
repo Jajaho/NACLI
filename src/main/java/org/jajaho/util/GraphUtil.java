@@ -11,12 +11,13 @@ import java.util.regex.Pattern;
 
 public class GraphUtil {
     public static boolean validateGraph(DirectedTypeValuePseudograph<Integer> graph, Scanner sc) {
-        boolean[] test = new boolean[1];
+        boolean[] test = new boolean[3];        // Important: Increse array length when adding a new test!
         int i = 0;
 
+        // TODO - Check whether graph is empty
+        test[i++] = checkForSelfLoops(graph,sc);
         test[i++] = checkForFloatingVertices(graph, sc);
         test[i++] = checkHasSource(graph);
-        // TODO - Catch self loops
 
         for (int j = 0; j < test.length; j++) {
             if (!test[j]) {
@@ -27,23 +28,25 @@ public class GraphUtil {
         System.out.println("All tests successful.");
         return true;
     }
+
     private static boolean checkForFloatingVertices(DirectedTypeValuePseudograph<Integer> graph, Scanner sc) {
         Pattern esc = Pattern.compile("(ESC)|(esc)");
         Pattern yes = Pattern.compile("[Yy][Ee][Ss]");
         Pattern no = Pattern.compile("[Nn][Oo]");
 
         Set<Integer> leaveSet = new HashSet<>();
-        getFloatingVertices(graph,leaveSet);
+        getFloatingVertices(graph, leaveSet);
+
         if (leaveSet.isEmpty()) {
             System.out.println("No floating nodes detected.");
             return true;
         } else {
-            System.out.println("Floating nodes detected: " + leaveSet.toString());
+            System.out.println("Floating nodals detected: " + leaveSet.toString());
             System.out.println("Do you wish to delete them? (YES/NO)");
             while (true) {
-                if (sc.findInLine(esc) != null)
+                if (sc.findInLine(esc) != null) {
                     System.exit(1);
-
+                }
                 if (sc.findInLine(yes) != null) {
                     leaveSet.forEach(graph::removeVertex);
                     System.out.println("Floating nodes removed.");
@@ -52,6 +55,7 @@ public class GraphUtil {
                 if (sc.findInLine(no) != null) {
                     return false;
                 }
+                sc.nextLine();
             }
         }
     }
@@ -71,17 +75,44 @@ public class GraphUtil {
 
             if (edgeCount < 2) {
                 leaveSet.add(vertex);
-                getFloatingVertices(graph,leaveSet);
+                getFloatingVertices(graph, leaveSet);
                 break;
             }
         }
     }
 
-    private static void removeFloatingVertices(DirectedTypeValuePseudograph<Integer> graph) {
-        for (Integer vertex : graph.vertexSet()) {
-            if (graph.edgesOf(vertex).size() < 2) {
-                graph.removeVertex(vertex);
-                removeFloatingVertices(graph);
+    private static boolean checkForSelfLoops(DirectedTypeValuePseudograph<Integer> graph, Scanner sc) {
+        Pattern esc = Pattern.compile("(ESC)|(esc)");
+        Pattern yes = Pattern.compile("[Yy][Ee][Ss]");
+        Pattern no = Pattern.compile("[Nn][Oo]");
+
+        Set<Edge> sLSet = new HashSet<>();
+
+        for (Edge e : graph.edgeSet()) {
+            if (graph.getEdgeTarget(e).equals(graph.getEdgeSource(e))) {
+                sLSet.add(e);
+            }
+        }
+
+        if (sLSet.isEmpty()) {
+            System.out.println("No self-loops detected.");
+            return true;
+        } else {
+            System.out.println("Self-loops detected: " + sLSet.toString());
+            System.out.println("Do you wish to delete them? (YES/NO)");
+            while (true) {
+                if (sc.findInLine(esc) != null) {
+                    System.exit(1);
+                }
+                if (sc.findInLine(yes) != null) {
+                    sLSet.forEach(graph::removeEdge);
+                    System.out.println("Self-loops removed.");
+                    return true;
+                }
+                if (sc.findInLine(no) != null) {
+                    return false;
+                }
+                sc.nextLine();
             }
         }
     }
