@@ -11,6 +11,8 @@ public class MathUtil {
         if (a.length != a[0].length)
             throw new IllegalArgumentException("Matrix is not quadratic.");
 
+        int n = a.length;
+
         switch (a.length) {
             case 1:
                 return a[0][0];
@@ -24,7 +26,18 @@ public class MathUtil {
                         - a[2][1] * a[1][2] * a[0][0]
                         - a[2][2] * a[1][0] * a[0][1];
             default:
-                throw new IllegalArgumentException("Matrix dimension not supported.");
+                int d = 0;
+                int sign = -1;
+                for (int skippedCol = 0; skippedCol < n; ++skippedCol) {
+                    double[][] evolvedMatrix = new double[n - 1][n - 1];
+                    for (int row = 0; row < n - 1; ++row) {
+                        int evolvedMatrixCol = 0;
+                        for (int col = 0; col < n; ++col)
+                            if (col != skippedCol) evolvedMatrix[row][evolvedMatrixCol++] = a[row + 1][col];
+                    }
+                    d += (sign *= -1) * a[0][skippedCol] * determinant(evolvedMatrix);
+                }
+                return d;
         }
     }
 
