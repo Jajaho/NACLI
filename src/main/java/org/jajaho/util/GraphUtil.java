@@ -10,8 +10,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class GraphUtil {
-    public static boolean validateGraph(DirectedTypeValuePseudograph<Integer> graph, Scanner sc) {
-        boolean[] test = new boolean[3];        // Important: Increse array length when adding a new test!
+    public static boolean validateGraph(DirectedTypeValuePseudograph graph, Scanner sc) {
+        boolean[] test = new boolean[3];        // Important: Increase array length when adding a new test!
         int i = 0;
 
         // TODO - Check whether graph is empty
@@ -29,7 +29,7 @@ public class GraphUtil {
         return true;
     }
 
-    private static boolean checkForFloatingVertices(DirectedTypeValuePseudograph<Integer> graph, Scanner sc) {
+    private static boolean checkForFloatingVertices(DirectedTypeValuePseudograph graph, Scanner sc) {
         Pattern esc = Pattern.compile("(ESC)|(esc)");
         Pattern yes = Pattern.compile("[Yy][Ee][Ss]");
         Pattern no = Pattern.compile("[Nn][Oo]");
@@ -41,7 +41,7 @@ public class GraphUtil {
             System.out.println("No floating nodes detected.");
             return true;
         } else {
-            System.out.println("Floating nodals detected: " + leaveSet.toString());
+            System.out.println("Floating nodals detected: " + leaveSet);
             System.out.println("Do you wish to delete them? (YES/NO)");
             while (true) {
                 if (sc.findInLine(esc) != null) {
@@ -60,7 +60,7 @@ public class GraphUtil {
         }
     }
 
-    private static void getFloatingVertices(DirectedTypeValuePseudograph<Integer> graph, Set<Integer> leaveSet) {
+    private static void getFloatingVertices(DirectedTypeValuePseudograph graph, Set<Integer> leaveSet) {
         for (Integer vertex : graph.vertexSet()) {
             if (leaveSet.contains(vertex))
                 continue;
@@ -81,7 +81,7 @@ public class GraphUtil {
         }
     }
 
-    private static boolean checkForSelfLoops(DirectedTypeValuePseudograph<Integer> graph, Scanner sc) {
+    private static boolean checkForSelfLoops(DirectedTypeValuePseudograph graph, Scanner sc) {
         Pattern esc = Pattern.compile("(ESC)|(esc)");
         Pattern yes = Pattern.compile("[Yy][Ee][Ss]");
         Pattern no = Pattern.compile("[Nn][Oo]");
@@ -98,7 +98,7 @@ public class GraphUtil {
             System.out.println("No self-loops detected.");
             return true;
         } else {
-            System.out.println("Self-loops detected: " + sLSet.toString());
+            System.out.println("Self-loops detected: " + sLSet);
             System.out.println("Do you wish to delete them? (YES/NO)");
             while (true) {
                 if (sc.findInLine(esc) != null) {
@@ -117,7 +117,7 @@ public class GraphUtil {
         }
     }
 
-    private static boolean checkHasSource(DirectedTypeValuePseudograph<Integer> graph) {
+    private static boolean checkHasSource(DirectedTypeValuePseudograph graph) {
         for (Edge edge : graph.edgeSet()) {
             if (graph.getEdgeType(edge).equals(Component.I) || graph.getEdgeType(edge).equals(Component.U))
                 System.out.println("Network has a valid source.");

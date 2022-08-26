@@ -4,21 +4,18 @@ import org.jajaho.data.*;
 import org.jajaho.util.GraphUtil;
 import org.jajaho.util.MathUtil;
 
-import java.util.HashSet;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public class Main {
 
     // Global Scanner Object
     static Scanner sc = new Scanner(System.in);
-
     // Global Control Patterns
     static Pattern esc = Pattern.compile("(ESC)|(esc)");
 
     public static void main(String[] args) {
-        DirectedTypeValuePseudograph<Integer> graph = new DirectedTypeValuePseudograph<>(Edge.class);
+        DirectedTypeValuePseudograph graph = new DirectedTypeValuePseudograph(Edge.class);
 
         // Local Control Patterns
         Pattern val = Pattern.compile("(VAL)|(val)");
@@ -67,13 +64,13 @@ public class Main {
         System.out.println("|| \\ | //   \\\\ |___| |___| || byJakob");
         System.out.println("-------------------------------------");
         System.out.println("Nodal Analysis Command Line Interface");
-        System.out.println("");
+        System.out.println();
         System.out.println("Construct the network by connecting nodals like this:");
         System.out.println("                      1 R 9 2");
         System.out.println("                      ^ ^ ^ ^");
         System.out.println("       Source Nodal  _| | | |_ Target Nodal");
         System.out.println("        Component Type _| |_ Component Value");
-        System.out.println("");
+        System.out.println();
         System.out.println("To terminate the program enter: ESC");
         System.out.println("    To validate the graph enter: VAL");
         System.out.println("To calculate the solution enter: CALC");
@@ -81,7 +78,7 @@ public class Main {
 
 
 
-    private static Sle makeSLE(DirectedTypeValuePseudograph<Integer> graph) {
+    private static Sle makeSLE(DirectedTypeValuePseudograph graph) {
         int n = graph.vertexSet().size() - 1;
         double[][] a = new double[n][n];
         double[] b = new double[n];
@@ -134,7 +131,7 @@ public class Main {
         }
     }
 
-    private static void inputEdge(String input, DirectedTypeValuePseudograph<Integer> graph) {
+    private static void inputEdge(String input, DirectedTypeValuePseudograph graph) {
         if (input == null) {
             //System.out.println("No valid edge detected.");
             return;
@@ -147,7 +144,7 @@ public class Main {
         Integer source = Integer.parseInt(input.substring(0, sourceDel));
         Integer target = Integer.parseInt(input.substring(valueDel + 1));
         Component type = Component.valueOf(input.substring(sourceDel + 1, typeDel));
-        double value = Double.parseDouble(input.substring(typeDel + 1, valueDel));
+        double value = Integer.parseInt(input.substring(typeDel + 1, valueDel));
 
         graph.addVertex(source);
         graph.addVertex(target);
@@ -171,8 +168,8 @@ public class Main {
         return res;
     }
 
-    private static Integer defGndNode(DirectedTypeValuePseudograph<Integer> graph) {
-        Integer gnd;
+    private static Integer defGndNode(DirectedTypeValuePseudograph graph) {
+        int gnd;
         System.out.println("Define GND Nodal.");
 
         while (true) {
@@ -191,21 +188,5 @@ public class Main {
             sc.nextLine();
         }
         return gnd;
-    }
-
-    private static void testGraph(DirectedTypeValuePseudograph<Integer> graph) {
-        graph.addVertex(0);
-        graph.addVertex(1);
-        graph.addVertex(2);
-
-        Edge e0 = graph.addEdge(0, 1);
-        e0.setComponentType(Component.I);
-        Edge e1 = graph.addEdge(1, 2);
-        Edge e2 = graph.addEdge(2, 0);
-
-        graph.setEdgeWeight(e0, 5.6);
-        graph.setEdgeWeight(e2, -5.6);
-
-        System.out.println(graph);
     }
 }

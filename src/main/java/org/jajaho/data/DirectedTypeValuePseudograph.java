@@ -7,13 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class DirectedTypeValuePseudograph<V> extends DirectedWeightedPseudograph<V, Edge> {
+public class DirectedTypeValuePseudograph extends DirectedWeightedPseudograph<Integer, Edge> {
 
     public DirectedTypeValuePseudograph(Class<? extends Edge> edgeClass) {
         super(edgeClass);
     }
 
-    public DirectedTypeValuePseudograph(Supplier<V> vertexSupplier, Supplier<Edge> edgeSupplier) {
+    public DirectedTypeValuePseudograph(Supplier<Integer> vertexSupplier, Supplier<Edge> edgeSupplier) {
         super(vertexSupplier, edgeSupplier);
     }
 
@@ -41,19 +41,19 @@ public class DirectedTypeValuePseudograph<V> extends DirectedWeightedPseudograph
         return toStringFromSets(vertexSet(), edgeSet(), getType().isDirected());   // from super.toString()
     }
 
-    public V getOppositeOf(V vertex, Edge edge) {
-        if (getEdgeTarget(edge) == vertex)
+    public Integer getOppositeOf(Integer vertex, Edge edge) {
+        if (getEdgeTarget(edge).equals(vertex))
             return getEdgeSource(edge);
-        if (getEdgeSource(edge) == vertex)
+        if (getEdgeSource(edge).equals(vertex))
             return getEdgeTarget(edge);
         return null;
     }
 
-    public Set<V> getAcyclicVertices() {
+    public Set<Integer> getAcyclicVertices() {
         CycleDetector cDetect = new CycleDetector(this);
-        Set<V> set = new HashSet<>();
+        Set<Integer> set = new HashSet<>();
 
-        for (V vertex : vertexSet()) {
+        for (Integer vertex : vertexSet()) {
             if (!cDetect.detectCyclesContainingVertex(vertex)) {
                 set.add(vertex);
             }
