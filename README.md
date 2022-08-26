@@ -11,6 +11,23 @@
   
 # Features
 - Supported component types: Current Source, Resistor, Conductor
-- The programm can validate the graph and automaticly remove floating nodals.
-- For calculation the network graph is transformed to an system of linear equations, which can be printed.
+- The program can validate the graph and automatically remove floating nodals.
+- For calculation the network graph is transformed to a system of linear equations, which can be printed.
 - Multiple connections between two nodals are allowed.
+
+# Technical Keypoints
+- Uses Temurin 16 JDK
+- Uses Gradle for dependency management
+- Uses an extended DirectedWeightedPseudograph from the JGraphT library
+- Custom MathUtil.java
+
+# Theory of Operation
+The circuit under test is manually inserted by the user using the command line interface. Control and data inputs are 
+processed using regular expressions. The circuit is represented as a directed weighted graph, which is created live with
+every input. The graph is validated upon request ("val" control input) or automatically before every compute if a calculation
+is triggered ("cal" control input). During the validation procedure the user is prompted to fix all errors if any are detected.
+Once the calculation is triggered the previously created graph is parsed into a system of linear equations (SLE) as per 
+common rules of the nodal analysis. In software this is accomplished by iterating through every edge (component) connected
+to every vertex (nodal) and adding the edge weight to corresponding index in the array e.g. conductance matrix (For further 
+information on how this is done exactly please see the makeSLE method in the Main.java class). After the matrix has been 
+parsed and checked for symmetry, Cramers method is used to solve the SLE and calculate the individual nodal potentials.

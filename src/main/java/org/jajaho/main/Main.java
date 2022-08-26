@@ -121,13 +121,14 @@ public class Main {
     }
 
     private static void addConductanceToMatrix(double[][] a, Integer firstVertex, Integer secondVertex, double g) {
+        // Offset because the 0th vertex is defined as ground.
         firstVertex -= 1;
         secondVertex -= 1;
-        if (firstVertex >= 0) {
-            // first vertex in its own row
+        if (firstVertex >= 0) {     // Check for GND nodal
+            // Add the first vertex in its own row.
             a[firstVertex][firstVertex] += g;
-            if (secondVertex >= 0) {
-                // other vertex in the first row
+            if (secondVertex >= 0) {        // Check for GND nodal
+                // Add the vertex on the other end in the row of the first nodal.
                 a[firstVertex][secondVertex] -= g;
             }
         }
