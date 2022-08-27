@@ -1,6 +1,9 @@
 package org.jajaho.main;
 
-import org.jajaho.data.*;
+import org.jajaho.data.Component;
+import org.jajaho.data.DirectedTypeValuePseudograph;
+import org.jajaho.data.Edge;
+import org.jajaho.data.Sle;
 import org.jajaho.util.GraphUtil;
 import org.jajaho.util.MathUtil;
 
@@ -9,33 +12,50 @@ import java.util.regex.Pattern;
 
 public class Main {
 
-    // Global Scanner Object
-    static Scanner sc = new Scanner(System.in);
-    // Global Control Patterns
-    static Pattern esc = Pattern.compile("(ESC)|(esc)");
+    // Global Terminal Scanner
+    static Scanner tScan = new Scanner(System.in);
+    // Global Escape Command Pattern
+    static Pattern esc = Pattern.compile("esc", Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) {
         DirectedTypeValuePseudograph graph = new DirectedTypeValuePseudograph(Edge.class);
 
-        // Local Control Patterns
-        Pattern val = Pattern.compile("(VAL)|(val)");
-        Pattern calc = Pattern.compile("(CALC)|(calc)");
+        //tScan.useDelimiter("\s");      // Use a whitespace as delimiter
+
+        // Level 1 Command Patterns
+        Pattern validate = Pattern.compile("val", Pattern.CASE_INSENSITIVE);        // Validate the graph
+        Pattern calculate = Pattern.compile("calc", Pattern.CASE_INSENSITIVE);      // Calculate the result
+        Pattern add = Pattern.compile("add", Pattern.CASE_INSENSITIVE);             // Add edge
+        Pattern remove = Pattern.compile("rem", Pattern.CASE_INSENSITIVE);          // Remove edge
+        Pattern show = Pattern.compile("show", Pattern.CASE_INSENSITIVE);           // Show all edges between vertices
+        Pattern read = Pattern.compile("read", Pattern.CASE_INSENSITIVE);           // Read file
 
         // Input Pattern
-        Pattern edge = Pattern.compile("[0-9]\s[IRG]\s[0-9]\s[0-9]");
+
+        String nodal = "[1-9][0-9]*";
+        String component = "[IRG]";
+        String value = "^(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?$";
+        Pattern edge = Pattern.compile(nodal + tScan.delimiter() + component + tScan.delimiter() + value
+                + tScan.delimiter() + nodal);
 
         printStartupMsg();
 
         while (true) {
-            if (sc.findInLine(esc) != null)
+            tScan.nextLine();
+            if (tScan.hasNext(esc)) {       // Escape
+                tScan.skip(esc);
                 System.exit(1);
-
-            if (sc.findInLine(val) != null) {
-                GraphUtil.validateGraph(graph, sc);
             }
 
-            if (sc.findInLine(calc) != null) {
-                if (!GraphUtil.validateGraph(graph, sc)) {
+
+            if (tScan.hasNext(validate)) {      // Validate
+                tScan.skip(validate);
+                GraphUtil.validateGraph(graph, tScan);
+            }
+
+            if (tScan.hasNext(calculate)) {         // Calculate
+                tScan.skip(calculate);
+                if (!GraphUtil.validateGraph(graph, tScan)) {
                     System.out.println("Network invalid - calculation aborted.");
                     continue;
                 }
@@ -53,8 +73,48 @@ public class Main {
                     System.out.println("V" + i + "= " + phis[i - 1]);
                 }
             }
-            inputEdge(sc.findInLine(edge), graph);
-            sc.nextLine();
+
+            if (tScan.hasNext(add)) {
+                tScan.skip(add);
+                int source, target;
+                Component type;
+                double val;
+
+                try {
+                    source = Integer.parseInt(tScan.next(nodal));
+                } catch (Exception e) {
+                    System.out.println("Invalid source vertex");
+                    continue;
+                }
+
+                try {
+                    type = Component.valueOf(tScan.next(component));
+                } catch (Exception e) {
+                    System.out.println("Invalid component type.");
+                    continue;
+                }
+
+                try {
+                    val = tScan.nextDouble();
+                } catch (Exception e) {
+                    System.out.println("Invalid component value.");
+                    continue;
+                }
+
+                try {
+                    target = Integer.parseInt(tScan.next(nodal));
+                } catch (Exception e) {
+                    System.out.println("Invalid target vertex");
+                    continue;
+                }
+
+                graph.addVertex(source);
+                graph.addVertex(target);
+                Edge e = graph.addEdge(source,target);
+                graph.setEdgeType(e, type);
+                graph.setEdgeWeight(e, val);
+                System.out.println("New connection made.");
+            }
         }
     }
 
@@ -75,7 +135,6 @@ public class Main {
         System.out.println("    To validate the graph enter: VAL");
         System.out.println("To calculate the solution enter: CALC");
     }
-
 
 
     private static Sle makeSLE(DirectedTypeValuePseudograph graph) {
@@ -131,37 +190,11 @@ public class Main {
         }
     }
 
-    private static void inputEdge(String input, DirectedTypeValuePseudograph graph) {
-        if (input == null) {
-            //System.out.println("No valid edge detected.");
-            return;
-        }
-
-        int sourceDel = input.indexOf("\s");
-        int typeDel = input.indexOf("\s", sourceDel + 1);
-        int valueDel = input.indexOf("\s", typeDel + 1);
-
-        Integer source = Integer.parseInt(input.substring(0, sourceDel));
-        Integer target = Integer.parseInt(input.substring(valueDel + 1));
-        Component type = Component.valueOf(input.substring(sourceDel + 1, typeDel));
-        double value = Integer.parseInt(input.substring(typeDel + 1, valueDel));
-
-        graph.addVertex(source);
-        graph.addVertex(target);
-
-        Edge e = graph.addEdge(source, target);
-        // maybe use Supplier<E> as edgeSupplier
-        graph.setEdgeType(e, type);
-        graph.setEdgeWeight(e, value);
-
-        System.out.println("New connection made.");
-    }
-
     // returns null if the pattern couldn't be matched
     private static Integer parseUserInput(Pattern p) {
         Integer res;
         try {
-            res = Integer.parseInt(sc.findInLine(p));
+            res = Integer.parseInt(tScan.findInLine(p));
         } catch (NumberFormatException e) {
             res = null;
         }
@@ -175,7 +208,7 @@ public class Main {
         while (true) {
             Integer res = parseUserInput(Pattern.compile("[0-9]"));
             if (res == null) {
-                sc.nextLine();
+                tScan.nextLine();
                 continue;
             }
 
@@ -185,7 +218,7 @@ public class Main {
             } else {
                 System.out.println("Nodal not found.");
             }
-            sc.nextLine();
+            tScan.nextLine();
         }
         return gnd;
     }

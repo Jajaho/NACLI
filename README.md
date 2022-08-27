@@ -18,6 +18,7 @@
 # Technical Keypoints
 - Uses Temurin 16 JDK
 - Uses Gradle for dependency management
+- TextIO for interactive user input
 - Uses an extended DirectedWeightedPseudograph from the JGraphT library
 - Custom MathUtil.java
 
