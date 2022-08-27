@@ -43,7 +43,6 @@ public class Main {
                 System.exit(1);
             }
 
-
             if (tScan.hasNext(validate)) {      // Validate
                 tScan.next(validate);
                 GraphUtil.validateGraph(graph, tScan);
@@ -72,7 +71,7 @@ public class Main {
                 }
             }
 
-            if (tScan.hasNext(add)) {
+            if (tScan.hasNext(add)) {       // Add edge
                 tScan.next(add);
                 int source, target;
                 Component type;
@@ -137,6 +136,7 @@ public class Main {
         System.out.println("To terminate the program enter: ESC");
         System.out.println("    To validate the graph enter: VAL");
         System.out.println("To calculate the solution enter: CALC");
+        System.out.println("Note: Depending on localisation, component double values have to be typed with either , or .");
     }
 
     // returns null if the pattern couldn't be matched

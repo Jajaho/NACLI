@@ -38,7 +38,7 @@ public class GraphUtil {
         getFloatingVertices(graph, leaveSet);
 
         if (leaveSet.isEmpty()) {
-            System.out.println("✓ No floating nodes detected.");
+            System.out.println("✓ No floating nodals detected.");
             return true;
         } else {
             System.out.println("Floating nodals detected: " + leaveSet);
