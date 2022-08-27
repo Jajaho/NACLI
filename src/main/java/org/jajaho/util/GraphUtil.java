@@ -21,11 +21,11 @@ public class GraphUtil {
 
         for (int j = 0; j < test.length; j++) {
             if (!test[j]) {
-                System.out.println("Validation failed.");
+                System.out.println("✖ Validation failed.");
                 return false;
             }
         }
-        System.out.println("All tests successful.");
+        System.out.println("✓ All tests successful.");
         return true;
     }
 
@@ -38,7 +38,7 @@ public class GraphUtil {
         getFloatingVertices(graph, leaveSet);
 
         if (leaveSet.isEmpty()) {
-            System.out.println("No floating nodes detected.");
+            System.out.println("✓ No floating nodes detected.");
             return true;
         } else {
             System.out.println("Floating nodals detected: " + leaveSet);
@@ -95,7 +95,7 @@ public class GraphUtil {
         }
 
         if (sLSet.isEmpty()) {
-            System.out.println("No self-loops detected.");
+            System.out.println("✓ No self-loops detected.");
             return true;
         } else {
             System.out.println("Self-loops detected: " + sLSet);
@@ -120,10 +120,10 @@ public class GraphUtil {
     private static boolean checkHasSource(DirectedTypeValuePseudograph graph) {
         for (Edge edge : graph.edgeSet()) {
             if (graph.getEdgeType(edge).equals(Component.I) || graph.getEdgeType(edge).equals(Component.U))
-                System.out.println("Network has a valid source.");
+                System.out.println("✓ Network has a valid source.");
             return true;
         }
-        System.out.println("Network has no valid supply.");
+        System.out.println("✖ Network has no valid supply.");
         return false;
     }
 }

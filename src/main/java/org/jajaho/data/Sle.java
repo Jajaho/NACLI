@@ -15,6 +15,58 @@ public class Sle {
         this.b = b;
     }
 
+    public Sle(DirectedTypeValuePseudograph graph) {
+        int n = graph.vertexSet().size() - 1;
+        a = new double[n][n];
+        b = new double[n];
+
+        for (Integer vertex : graph.vertexSet()) {
+            // skip the gnd vertex row
+            if (vertex.equals(0))
+                continue;
+            for (Edge edge : graph.edgesOf(vertex)) {
+
+                switch (graph.getEdgeType(edge)) {
+                    case I:
+                        if (graph.getEdgeTarget(edge).equals(vertex)) {
+                            if (!graph.getEdgeTarget(edge).equals(0))
+                                b[graph.getEdgeTarget(edge) - 1] += graph.getEdgeWeight(edge);
+                            if (!graph.getEdgeSource(edge).equals(0))
+                                b[graph.getEdgeSource(edge) - 1] -= graph.getEdgeWeight(edge);
+                        }
+                        break;
+                    case R: {
+                        double g = 1 / graph.getEdgeWeight(edge);
+                        addConductanceToMatrix(a, vertex, graph.getOppositeOf(vertex, edge), g);
+                    }
+                    break;
+                    case G: {
+                        double g = graph.getEdgeWeight(edge);
+                        addConductanceToMatrix(a, vertex, graph.getOppositeOf(vertex, edge), g);
+                    }
+                    break;
+                    default:
+                        System.out.println("Component not supported.");
+                        break;
+                }
+            }
+        }
+    }
+
+    private static void addConductanceToMatrix(double[][] a, Integer firstVertex, Integer secondVertex, double g) {
+        // Offset because the 0th vertex is defined as ground.
+        firstVertex -= 1;
+        secondVertex -= 1;
+        if (firstVertex >= 0) {     // Check for GND nodal
+            // Add the first vertex in its own row.
+            a[firstVertex][firstVertex] += g;
+            if (secondVertex >= 0) {        // Check for GND nodal
+                // Add the vertex on the other end in the row of the first nodal.
+                a[firstVertex][secondVertex] -= g;
+            }
+        }
+    }
+
     public void print() {
         if (a == null || b == null) {
             return;
