@@ -16,9 +16,8 @@
 - Multiple connections between two nodals are allowed.
 
 # Technical Keypoints
-- Uses Temurin 16 JDK
-- Uses Gradle for dependency management
-- TextIO for interactive user input
+- Temurin 16 JDK
+- Gradle for dependency management
 - Uses an extended DirectedWeightedPseudograph from the JGraphT library
 - Custom MathUtil.java
 

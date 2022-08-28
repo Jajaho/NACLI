@@ -1,5 +1,7 @@
 package org.jajaho.util;
 
+import java.math.BigDecimal;
+
 public class MathUtil {
 
 
@@ -41,25 +43,25 @@ public class MathUtil {
         }
     }
 
-    public static boolean isAxisSymmetric(double[][] a) {
+    public static boolean isAxisSymmetric(BigDecimal[][] a) {
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < a.length; j++) {
-                if (a[i][j] - a[j][i] > 1e-10)
+                if (a[i][j].compareTo(a[j][i]) != 0)    // not equal in value
                     return false;
             }
         }
         return true;
     }
 
-    private static double[][] deepCopy(double[][] matrix) {
-        return java.util.Arrays.stream(matrix).map(el -> el.clone()).toArray($ -> matrix.clone());
+    private static BigDecimal[][] deepCopy(BigDecimal[][] matrix) {
+        return java.util.Arrays.stream(matrix).map(BigDecimal[]::clone).toArray($ -> matrix.clone());
     }
 
-    public static double[] cramersRule(double[][] a, double[] b) {
-        double[] res = new double[a.length];
+    public static BigDecimal[] cramersRule(BigDecimal[][] a, BigDecimal[] b) {
+        BigDecimal[] res = new BigDecimal[a.length];
         double d = determinant(a);
         for (int i = 0; i < a.length; i++) {
-            double[][] a_i = deepCopy(a);
+            BigDecimal[][] a_i = deepCopy(a);
             a_i[i] = b;
             res[i] = determinant(a_i) / d;
         }

@@ -1,13 +1,17 @@
 package org.jajaho.data;
 
+import org.jajaho.util.MathUtil;
+
+import java.math.BigDecimal;
+
 public class Sle {
 
-    public double[][] a;
-    public double[] b;
+    private BigDecimal[][] a;       // Conductance matrix
+    private BigDecimal[] b;         // Current vector
 
     public Sle(){}
 
-    public Sle(double[][] a,double[] b) {
+    public Sle(BigDecimal[][] a, BigDecimal[] b) {
         if (a.length != b.length) {
             throw new IllegalArgumentException("Dimension mismatch.");
         }
@@ -17,8 +21,8 @@ public class Sle {
 
     public Sle(CircuitGraph graph) {
         int n = graph.vertexSet().size() - 1;
-        a = new double[n][n];
-        b = new double[n];
+        a = new BigDecimal[n][n];
+        b = new BigDecimal[n];
 
         for (Integer vertex : graph.vertexSet()) {
             // skip the gnd vertex row
@@ -28,21 +32,23 @@ public class Sle {
 
                 switch (graph.getEdgeType(edge)) {
                     case I:
-                        if (graph.getEdgeTarget(edge).equals(vertex)) {
-                            if (!graph.getEdgeTarget(edge).equals(0))
-                                b[graph.getEdgeTarget(edge) - 1] += graph.getEdgeWeight(edge);
+                        Integer targetV = graph.getEdgeTarget(edge);
+                        Integer sourceV = graph.getEdgeTarget(edge);
+                        // If current source is flowing into the nodal
+                        if (targetV.equals(vertex)) {
+                            if (targetV.equals(0))
+                                b[targetV - 1] = b[targetV - 1].add(edge.getValue());   // into
                             if (!graph.getEdgeSource(edge).equals(0))
-                                b[graph.getEdgeSource(edge) - 1] -= graph.getEdgeWeight(edge);
+                                b[sourceV - 1] = b[targetV - 1].subtract(edge.getValue());      // out of
                         }
                         break;
                     case R: {
-                        double g = 1 / graph.getEdgeWeight(edge);
+                        BigDecimal g = new BigDecimal("1").divide(edge.getValue());
                         addConductanceToMatrix(a, vertex, graph.getOppositeOf(vertex, edge), g);
                     }
                     break;
                     case G: {
-                        double g = graph.getEdgeWeight(edge);
-                        addConductanceToMatrix(a, vertex, graph.getOppositeOf(vertex, edge), g);
+                        addConductanceToMatrix(a, vertex, graph.getOppositeOf(vertex, edge), edge.getValue());
                     }
                     break;
                     default:
@@ -53,16 +59,16 @@ public class Sle {
         }
     }
 
-    private static void addConductanceToMatrix(double[][] a, Integer firstVertex, Integer secondVertex, double g) {
+    private static void addConductanceToMatrix(BigDecimal[][] a, Integer firstVertex, Integer secondVertex, BigDecimal g) {
         // Offset because the 0th vertex is defined as ground.
         firstVertex -= 1;
         secondVertex -= 1;
         if (firstVertex >= 0) {     // Check for GND nodal
             // Add the first vertex in its own row.
-            a[firstVertex][firstVertex] += g;
+            a[firstVertex][firstVertex] = a[firstVertex][firstVertex].add(g);
             if (secondVertex >= 0) {        // Check for GND nodal
                 // Add the vertex on the other end in the row of the first nodal.
-                a[firstVertex][secondVertex] -= g;
+                a[firstVertex][secondVertex] = a[firstVertex][secondVertex].subtract(g);
             }
         }
     }
@@ -73,38 +79,31 @@ public class Sle {
         }
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < a[0].length; j++) {
-                System.out.print(toFormatDouble(a[i][j]) + " ");
+                System.out.print(a[i][j].toEngineeringString() + " ");
             }
             System.out.println("| " + b[i]);
         }
     }
 
-    private static String toFormatDouble(double n) {
-        double absN = Math.abs(n);
-        if (absN > 10e6 || absN < 10e-5) {
-            return String.format("%1.2e", n);
-        }
-        else if (absN < 1) {
-            return String.format("%1.4", n);
-        }
-        return String.format("%7", n);
+    public BigDecimal[] solve() {
+        return MathUtil.cramersRule(a, b);
     }
-    /*
-    public void setValue1(A a) {
+
+    //---------- Getter & Setter ------------
+
+    public void setA(BigDecimal[][] a) {
         this.a = a;
     }
 
-    public void setValue2(B b) {
+    public void setB(BigDecimal[] b) {
         this.b = b;
     }
 
-    public A getValue1() {
+    public BigDecimal[][] getA() {
         return a;
     }
 
-    public A getValue1() {
-        return a;
+    public BigDecimal[] getB() {
+        return b;
     }
-
-     */
 }

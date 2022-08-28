@@ -61,15 +61,15 @@ public class Main {
                 sle.print();
 
                 // Post conversion validation
-                if (!MathUtil.isAxisSymmetric(sle.a)) {
+                if (!MathUtil.isAxisSymmetric(sle.getA())) {
                     System.out.println("✖ Matrix is not symmetric - calculation aborted.");
                     tScan.nextLine();
                     continue;
                 }
-                double[] phis = MathUtil.cramersRule(sle.a, sle.b);
+                BigDecimal[] phis = sle.solve();
                 System.out.println("Voltages at nodals (referenced to nodal 0):");
                 for (int i = 1; i - 1 < phis.length; i++) {
-                    System.out.println("V" + i + "= " + phis[i - 1]);
+                    System.out.println("V" + i + "= " + phis[i - 1].toEngineeringString());
                 }
             }
 
