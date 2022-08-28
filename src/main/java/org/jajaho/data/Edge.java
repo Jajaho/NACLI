@@ -9,10 +9,22 @@ public class Edge extends DefaultEdge {
     private BigDecimal value;
     private Component componentType;
 
-    public Edge() {
-        super();
+    // TODO - Ensure correct format for longer vertices
+    public void printArt() {
+        System.out.println("      " + name);
+        System.out.print("(" + getSource() + ")---");
+        switch (componentType) {
+            case R, G -> {
+                System.out.print("[__]");
+            }
+            case I -> {
+                System.out.print("(->)");
+            }
+            default -> System.out.print("????");
+        }
+        System.out.println("---(" + getTarget() + ")");
+        System.out.println("      " + value.toEngineeringString());
     }
-
     //--------- Getter & Setter ------------
 
     public Component getComponentType() {

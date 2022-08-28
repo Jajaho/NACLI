@@ -143,7 +143,7 @@ public class Main {
                 // search for the edge name in the graph
                 for (Edge e : graph.edgeSet()) {
                     if (e.getName().equals(name)) {
-                        System.out.println(e);
+                        e.printArt();
                         System.out.println("Do you wish to delete it? (YES/NO)");
                         while (true) {
                             if (tScan.hasNext(esc)) {
