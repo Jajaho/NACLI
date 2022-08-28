@@ -69,7 +69,7 @@ public class Main {
                 BigDecimal[] phis = sle.solve();
                 System.out.println("Voltages at nodals (referenced to nodal 0):");
                 for (int i = 1; i - 1 < phis.length; i++) {
-                    System.out.println("V" + i + "= " + phis[i - 1].toEngineeringString());
+                    System.out.println("V" + i + "= " + phis[i - 1].toEngineeringString() + " V");
                 }
             }
 

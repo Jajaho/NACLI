@@ -18,7 +18,8 @@
 # Technical Keypoints
 - Temurin 16 JDK
 - Gradle for dependency management
-- Uses an extended DirectedWeightedPseudograph from the JGraphT library
+- Customised JGraphT library
+- Precise component values through BigDecimal
 - Custom MathUtil.java
 
 # Theory of Operation
