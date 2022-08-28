@@ -9,6 +9,8 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import static org.jajaho.main.Main.*;
+
 public class GraphUtil {
     public static boolean validateGraph(CircuitGraph graph, Scanner sc) {
         boolean[] test = new boolean[3];        // Important: Increase array length when adding a new test!
@@ -30,10 +32,6 @@ public class GraphUtil {
     }
 
     private static boolean checkForFloatingVertices(CircuitGraph graph, Scanner sc) {
-        Pattern esc = Pattern.compile("(ESC)|(esc)");
-        Pattern yes = Pattern.compile("[Yy][Ee][Ss]");
-        Pattern no = Pattern.compile("[Nn][Oo]");
-
         Set<Integer> leaveSet = new HashSet<>();
         getFloatingVertices(graph, leaveSet);
 
@@ -82,10 +80,6 @@ public class GraphUtil {
     }
 
     private static boolean checkForSelfLoops(CircuitGraph graph, Scanner sc) {
-        Pattern esc = Pattern.compile("(ESC)|(esc)");
-        Pattern yes = Pattern.compile("[Yy][Ee][Ss]");
-        Pattern no = Pattern.compile("[Nn][Oo]");
-
         Set<Edge> sLSet = new HashSet<>();
 
         for (Edge e : graph.edgeSet()) {

@@ -16,7 +16,10 @@ public class Main {
     // Global Terminal Scanner
     static Scanner tScan = new Scanner(System.in);
     // Global Escape Command Pattern
-    static Pattern esc = Pattern.compile("esc", Pattern.CASE_INSENSITIVE);
+    public static Pattern esc = Pattern.compile("esc", Pattern.CASE_INSENSITIVE);
+    // Global Yes/No Patterns
+    public static Pattern yes = Pattern.compile("yes", Pattern.CASE_INSENSITIVE);
+    public static Pattern no = Pattern.compile("no", Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) {
         CircuitGraph graph = new CircuitGraph(Edge.class);
@@ -118,6 +121,42 @@ public class Main {
                 e.setComponentType(type);
                 e.setValue(value);
                 System.out.println("✓ New connection made.");
+            }
+
+            if(tScan.hasNext(remove)) {
+                String name;
+                // check whether the input is syntactically correct
+                try {
+                    name = tScan.next(namePatStr);
+                } catch (Exception e) {
+                    System.out.println("✖ Invalid component name - must be f.e. R1");
+                    tScan.nextLine();
+                    continue;
+                }
+                // search for the edge name in the graph
+                for (Edge e : graph.edgeSet()) {
+                    if (e.getName().equals(name)) {
+                        System.out.println(e);
+                        System.out.println("Do you wish to delete it? (YES/NO)");
+                        while (true) {
+                            if (tScan.findInLine(esc) != null) {
+                                System.exit(1);
+                            }
+                            if (tScan.findInLine(yes) != null) {
+                                graph.removeEdge(e);
+                                System.out.println("✓ Edge removed.");
+                                tScan.nextLine();
+                                continue;
+                            }
+                            if (tScan.findInLine(no) != null) {
+                                tScan.nextLine();
+                                continue;
+                            }
+                            tScan.nextLine();
+                        }
+                    }
+                }
+                System.out.println("✖ Component not found.");
             }
             tScan.nextLine();
         }
