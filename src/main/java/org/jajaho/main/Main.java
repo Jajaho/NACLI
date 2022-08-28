@@ -128,8 +128,10 @@ public class Main {
                 System.out.println("✓ New connection made.");
             }
 
-            if(tScan.hasNext(remove)) {
+            if(tScan.hasNext(remove)) {     // remove edge
+                tScan.next(remove);
                 String name;
+                boolean found = false;
                 // check whether the input is syntactically correct
                 try {
                     name = tScan.next(namePatStr);
@@ -144,25 +146,34 @@ public class Main {
                         System.out.println(e);
                         System.out.println("Do you wish to delete it? (YES/NO)");
                         while (true) {
-                            if (tScan.findInLine(esc) != null) {
+                            if (tScan.hasNext(esc)) {
                                 System.exit(1);
                             }
-                            if (tScan.findInLine(yes) != null) {
+                            if (tScan.hasNext(yes)) {
+                                tScan.next(yes);
                                 graph.removeEdge(e);
                                 System.out.println("✓ Edge removed.");
-                                tScan.nextLine();
-                                continue;
+                                break;
                             }
-                            if (tScan.findInLine(no) != null) {
-                                tScan.nextLine();
-                                continue;
+                            if (tScan.hasNext(no)) {
+                                tScan.next(no);
+                                break;
                             }
                             tScan.nextLine();
                         }
+                        found = true;
                     }
                 }
-                System.out.println("✖ Component not found.");
+                // If an edge has been found and a decision has been made by the user the while loop is broken and the
+                // text below has to be skipped.
+                if (!found)
+                    System.out.println("✖ Component not found.");
             }
+
+            if (tScan.hasNext(read)) {
+
+            }
+
             tScan.nextLine();
         }
     }

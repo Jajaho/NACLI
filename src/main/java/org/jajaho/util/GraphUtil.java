@@ -50,15 +50,17 @@ public class GraphUtil {
             System.out.println("Floating nodals detected: " + leaveSet);
             System.out.println("Do you wish to delete them? (YES/NO)");
             while (true) {
-                if (sc.findInLine(esc) != null) {
+                if (sc.hasNext(esc)) {
                     System.exit(1);
                 }
-                if (sc.findInLine(yes) != null) {
+                if (sc.hasNext(yes)) {
+                    sc.next(yes);
                     leaveSet.forEach(graph::removeVertex);
                     System.out.println("Floating nodes removed.");
                     return true;
                 }
-                if (sc.findInLine(no) != null) {
+                if (sc.hasNext(no)) {
+                    sc.hasNext(no);
                     return false;
                 }
                 sc.nextLine();
@@ -103,15 +105,17 @@ public class GraphUtil {
             System.out.println("Self-loops detected: " + sLSet);
             System.out.println("Do you wish to delete them? (YES/NO)");
             while (true) {
-                if (sc.findInLine(esc) != null) {
+                if (sc.hasNext(esc)) {
                     System.exit(1);
                 }
-                if (sc.findInLine(yes) != null) {
+                if (sc.hasNext(yes)) {
+                    sc.next(yes);
                     sLSet.forEach(graph::removeEdge);
                     System.out.println("Self-loops removed.");
                     return true;
                 }
-                if (sc.findInLine(no) != null) {
+                if (sc.hasNext(no)) {
+                    sc.hasNext(no);
                     return false;
                 }
                 sc.nextLine();
