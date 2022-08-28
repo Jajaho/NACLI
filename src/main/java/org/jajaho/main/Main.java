@@ -83,6 +83,11 @@ public class Main {
 
                 try {
                     name = tScan.next(namePatStr);
+                    if (!GraphUtil.isUniqueName(graph, name)) {
+                        System.out.println("✖ Component name is not unique.");
+                        tScan.nextLine();
+                        continue;
+                    }
                     type = Component.valueOf(name.substring(0, 1));
                 } catch (Exception e) {
                     System.out.println("✖ Invalid component name - must be f.e. R1");

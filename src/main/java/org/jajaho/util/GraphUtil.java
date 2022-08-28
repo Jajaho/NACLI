@@ -31,6 +31,14 @@ public class GraphUtil {
         return true;
     }
 
+    public static boolean isUniqueName(CircuitGraph graph, String name) {
+        for (Edge e : graph.edgeSet()) {
+            if (name.equals(e.getName()))
+                return false;
+        }
+        return true;
+    }
+
     private static boolean checkForFloatingVertices(CircuitGraph graph, Scanner sc) {
         Set<Integer> leaveSet = new HashSet<>();
         getFloatingVertices(graph, leaveSet);
