@@ -31,7 +31,7 @@ public class Main {
 
         // Input Pattern Strings
         String intPatStr = "0|([1-9][0-9]*)";
-        String namePatStr = "[IRG]" + intPatStr;
+        String namePatStr = "[IRG](0|([1-9][0-9]*))";
         String doublePatStr = "^(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?$";
 
         printStartupMsg();
@@ -50,7 +50,7 @@ public class Main {
             if (tScan.hasNext(calculate)) {         // Calculate
                 tScan.next(calculate);
                 if (!GraphUtil.validateGraph(graph, tScan)) {
-                    System.out.println("Network invalid - calculation aborted.");
+                    System.out.println("✖ Network invalid - calculation aborted.");
                     tScan.nextLine();
                     continue;
                 }
@@ -59,7 +59,7 @@ public class Main {
 
                 // Post conversion validation
                 if (!MathUtil.isAxisSymmetric(sle.a)) {
-                    System.out.println("Matrix is not symmetric - calculation aborted.");
+                    System.out.println("✖ Matrix is not symmetric - calculation aborted.");
                     tScan.nextLine();
                     continue;
                 }
@@ -76,12 +76,13 @@ public class Main {
                 int source, target;
                 Component type;
                 String name;
-                BigDecimal val;
+                BigDecimal value;
 
                 try {
                     name = tScan.next(namePatStr);
+                    type = Component.valueOf(name.substring(0, 1));
                 } catch (Exception e) {
-                    System.out.println("Invalid source vertex");
+                    System.out.println("✖ Invalid component name - must be f.e. R1");
                     tScan.nextLine();
                     continue;
                 }
@@ -89,24 +90,7 @@ public class Main {
                 try {
                     source = Integer.parseInt(tScan.next(intPatStr));
                 } catch (Exception e) {
-                    System.out.println("Invalid source vertex");
-                    tScan.nextLine();
-                    continue;
-                }
-
-                try {
-                    type = Component.valueOf(tScan.next(component));
-                } catch (Exception e) {
-                    System.out.println("Invalid component type.");
-                    tScan.nextLine();
-                    continue;
-                }
-
-                try {
-                    val = tScan.nextDouble();
-                } catch (Exception e) {
-                    System.out.println("Invalid component value.");
-                    System.out.println("Note: Depending on localisation, component values have to be typed with either , or .");
+                    System.out.println("✖ Invalid source vertex - must be a positive integer.");
                     tScan.nextLine();
                     continue;
                 }
@@ -114,7 +98,15 @@ public class Main {
                 try {
                     target = Integer.parseInt(tScan.next(intPatStr));
                 } catch (Exception e) {
-                    System.out.println("Invalid target vertex");
+                    System.out.println("✖ Invalid target vertex - must be an integer.");
+                    tScan.nextLine();
+                    continue;
+                }
+
+                try {
+                    value = tScan.nextBigDecimal();
+                } catch (Exception e) {
+                    System.out.println("✖ Invalid component value - must be a BigDecimal");
                     tScan.nextLine();
                     continue;
                 }
@@ -122,9 +114,10 @@ public class Main {
                 graph.addVertex(source);
                 graph.addVertex(target);
                 Edge e = graph.addEdge(source,target);
-                graph.setEdgeType(e, type);
-                graph.setEdgeWeight(e, val);
-                System.out.println("New connection made.");
+                e.setName(name);
+                e.setComponentType(type);
+                e.setValue(value);
+                System.out.println("✓ New connection made.");
             }
             tScan.nextLine();
         }

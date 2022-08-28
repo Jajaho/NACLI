@@ -13,6 +13,8 @@ public class Edge extends DefaultEdge {
         super();
     }
 
+    //--------- Getter & Setter ------------
+
     public Component getComponentType() {
         return componentType;
     }
@@ -33,7 +35,7 @@ public class Edge extends DefaultEdge {
         return value;
     }
 
-    public void setValue() {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 }
