@@ -34,7 +34,7 @@ public class Main {
 
         // Input Pattern Strings
         String intPatStr = "0|([1-9][0-9]*)";
-        String namePatStr = "[IRG](0|([1-9][0-9]*))";
+        String namePatStr = "[IRG](0|([1-9][0-9]*))";   // Not case-insensitive because of enum and remove command
         String doublePatStr = "^(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?$";
 
         printStartupMsg();

@@ -3,13 +3,12 @@ package org.jajaho.data;
 import org.jajaho.util.MathUtil;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 public class Sle {
 
     private BigDecimal[][] a;       // Conductance matrix
     private BigDecimal[] b;         // Current vector
-
-    public Sle(){}
 
     public Sle(BigDecimal[][] a, BigDecimal[] b) {
         if (a.length != b.length) {
@@ -22,7 +21,10 @@ public class Sle {
     public Sle(CircuitGraph graph) {
         int n = graph.vertexSet().size() - 1;
         a = new BigDecimal[n][n];
-        b = new BigDecimal[n];
+        for (int i = 0; i < n; i++) {
+            a[i] = prefilledWith("0", n);
+        }
+        b = prefilledWith("0", n);
 
         for (Integer vertex : graph.vertexSet()) {
             // skip the gnd vertex row
@@ -87,6 +89,14 @@ public class Sle {
 
     public BigDecimal[] solve() {
         return MathUtil.cramersRule(a, b);
+    }
+
+    private BigDecimal[] prefilledWith(String value, int size) {
+        BigDecimal[] array = new BigDecimal[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = new BigDecimal(value);
+        }
+        return array;
     }
 
     //---------- Getter & Setter ------------

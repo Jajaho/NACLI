@@ -59,11 +59,11 @@ public class MathUtil {
 
     public static BigDecimal[] cramersRule(BigDecimal[][] a, BigDecimal[] b) {
         BigDecimal[] res = new BigDecimal[a.length];
-        double d = determinant(a);
+        BigDecimal d = new DeterminantUtil(a).determinant();
         for (int i = 0; i < a.length; i++) {
             BigDecimal[][] a_i = deepCopy(a);
             a_i[i] = b;
-            res[i] = determinant(a_i) / d;
+            res[i] = new DeterminantUtil(a_i).determinant().divide(d);
         }
         return res;
     }
