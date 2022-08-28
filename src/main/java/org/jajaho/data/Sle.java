@@ -15,7 +15,7 @@ public class Sle {
         this.b = b;
     }
 
-    public Sle(DirectedTypeValuePseudograph graph) {
+    public Sle(CircuitGraph graph) {
         int n = graph.vertexSet().size() - 1;
         a = new double[n][n];
         b = new double[n];

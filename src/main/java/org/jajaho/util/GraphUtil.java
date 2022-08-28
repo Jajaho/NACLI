@@ -1,7 +1,7 @@
 package org.jajaho.util;
 
 import org.jajaho.data.Component;
-import org.jajaho.data.DirectedTypeValuePseudograph;
+import org.jajaho.data.CircuitGraph;
 import org.jajaho.data.Edge;
 
 import java.util.HashSet;
@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class GraphUtil {
-    public static boolean validateGraph(DirectedTypeValuePseudograph graph, Scanner sc) {
+    public static boolean validateGraph(CircuitGraph graph, Scanner sc) {
         boolean[] test = new boolean[3];        // Important: Increase array length when adding a new test!
         int i = 0;
 
@@ -29,7 +29,7 @@ public class GraphUtil {
         return true;
     }
 
-    private static boolean checkForFloatingVertices(DirectedTypeValuePseudograph graph, Scanner sc) {
+    private static boolean checkForFloatingVertices(CircuitGraph graph, Scanner sc) {
         Pattern esc = Pattern.compile("(ESC)|(esc)");
         Pattern yes = Pattern.compile("[Yy][Ee][Ss]");
         Pattern no = Pattern.compile("[Nn][Oo]");
@@ -60,7 +60,7 @@ public class GraphUtil {
         }
     }
 
-    private static void getFloatingVertices(DirectedTypeValuePseudograph graph, Set<Integer> leaveSet) {
+    private static void getFloatingVertices(CircuitGraph graph, Set<Integer> leaveSet) {
         for (Integer vertex : graph.vertexSet()) {
             if (leaveSet.contains(vertex))
                 continue;
@@ -81,7 +81,7 @@ public class GraphUtil {
         }
     }
 
-    private static boolean checkForSelfLoops(DirectedTypeValuePseudograph graph, Scanner sc) {
+    private static boolean checkForSelfLoops(CircuitGraph graph, Scanner sc) {
         Pattern esc = Pattern.compile("(ESC)|(esc)");
         Pattern yes = Pattern.compile("[Yy][Ee][Ss]");
         Pattern no = Pattern.compile("[Nn][Oo]");
@@ -117,7 +117,7 @@ public class GraphUtil {
         }
     }
 
-    private static boolean checkHasSource(DirectedTypeValuePseudograph graph) {
+    private static boolean checkHasSource(CircuitGraph graph) {
         for (Edge edge : graph.edgeSet()) {
             if (graph.getEdgeType(edge).equals(Component.I) || graph.getEdgeType(edge).equals(Component.U))
                 System.out.println("✓ Network has a valid source.");

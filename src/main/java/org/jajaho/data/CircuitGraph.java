@@ -1,20 +1,15 @@
 package org.jajaho.data;
 
 import org.jgrapht.alg.cycle.CycleDetector;
-import org.jgrapht.graph.DirectedWeightedPseudograph;
+import org.jgrapht.graph.Pseudograph;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Supplier;
 
-public class DirectedTypeValuePseudograph extends DirectedWeightedPseudograph<Integer, Edge> {
+public class CircuitGraph extends Pseudograph<Integer, Edge> {
 
-    public DirectedTypeValuePseudograph(Class<? extends Edge> edgeClass) {
+    public CircuitGraph(Class<? extends Edge> edgeClass) {
         super(edgeClass);
-    }
-
-    public DirectedTypeValuePseudograph(Supplier<Integer> vertexSupplier, Supplier<Edge> edgeSupplier) {
-        super(vertexSupplier, edgeSupplier);
     }
 
     @Override // TODO

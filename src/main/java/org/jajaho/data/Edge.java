@@ -1,8 +1,12 @@
 package org.jajaho.data;
 
-import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.DefaultEdge;
 
-public class Edge extends DefaultWeightedEdge {
+import java.math.BigDecimal;
+
+public class Edge extends DefaultEdge {
+    private String name;
+    private BigDecimal value;
     private Component componentType;
 
     public Edge() {
@@ -17,13 +21,19 @@ public class Edge extends DefaultWeightedEdge {
         this.componentType = type;
     }
 
-    @Override // TODO
-    public String toString() {
-        return super.toString();
+    public String getName() {
+        return name;
     }
 
-    @Override // TODO
-    public Object clone() {
-        return super.clone();
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    public void setValue() {
+        this.value = value;
     }
 }
