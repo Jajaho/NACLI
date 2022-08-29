@@ -57,60 +57,10 @@ public class Main {
 
             if (tScan.hasNext(add)) {       // Add edge
                 tScan.next(add);
-
-                int source, target;
-                Component type;
-                String name;
-                BigDecimal value;
-
-                try {
-                    name = tScan.next(namePatStr);
-                    if (!GraphUtil.isUniqueName(graph, name)) {
-                        System.out.println("✖ Component name is not unique.");
-                        tScan.nextLine();
-                        continue;
-                    }
-                    type = Component.valueOf(name.substring(0, 1));
-                } catch (Exception e) {
-                    System.out.println("✖ Invalid component name - must be f.e. R1");
-                    tScan.nextLine();
-                    continue;
-                }
-
-                try {
-                    source = Integer.parseInt(tScan.next(intPatStr));
-                } catch (Exception e) {
-                    System.out.println("✖ Invalid source vertex - must be a positive integer.");
-                    tScan.nextLine();
-                    continue;
-                }
-
-                try {
-                    target = Integer.parseInt(tScan.next(intPatStr));
-                } catch (Exception e) {
-                    System.out.println("✖ Invalid target vertex - must be an integer.");
-                    tScan.nextLine();
-                    continue;
-                }
-
-                try {
-                    value = tScan.nextBigDecimal();
-                } catch (Exception e) {
-                    System.out.println("✖ Invalid component value - must be a BigDecimal");
-                    tScan.nextLine();
-                    continue;
-                }
-
-                graph.addVertex(source);
-                graph.addVertex(target);
-                Edge e = graph.addEdge(source,target);
-                e.setName(name);
-                e.setComponentType(type);
-                e.setValue(value);
-                System.out.println("✓ New connection made.");
+                parseEdge(tScan, graph);
             }
 
-            if(tScan.hasNext(remove)) {     // remove edge
+            if (tScan.hasNext(remove)) {     // remove edge
                 tScan.next(remove);
                 String name;
                 boolean found = false;
@@ -153,7 +103,7 @@ public class Main {
             }
 
             if (tScan.hasNext(read)) {      // read file
-                ReadUtil.read("C:\\Users\\Jakob\\Documents\\Git Repos\\NACLI\\testfiles\\netlist.cir");
+                ReadUtil.read("C:\\Users\\Jakob\\Documents\\Git Repos\\NACLI\\testfiles\\netlist.cir", graph);
             }
 
             tScan.nextLine();
@@ -179,7 +129,58 @@ public class Main {
         System.out.println("calc - calculate the solution");
     }
 
+    public static void parseEdge(Scanner sc, CircuitGraph graph) {
+        int source, target;
+        Component type;
+        String name;
+        BigDecimal value;
 
+        try {
+            name = sc.next(namePatStr);
+            if (!GraphUtil.isUniqueName(graph, name)) {
+                System.out.println("✖ Component name is not unique.");
+                sc.nextLine();
+                return;
+            }
+            type = Component.valueOf(name.substring(0, 1));
+        } catch (Exception e) {
+            System.out.println("✖ Invalid component name - must be f.e. R1");
+            sc.nextLine();
+            return;
+        }
+
+        try {
+            source = Integer.parseInt(sc.next(intPatStr));
+        } catch (Exception e) {
+            System.out.println("✖ Invalid source vertex - must be a positive integer.");
+            sc.nextLine();
+            return;
+        }
+
+        try {
+            target = Integer.parseInt(sc.next(intPatStr));
+        } catch (Exception e) {
+            System.out.println("✖ Invalid target vertex - must be an integer.");
+            sc.nextLine();
+            return;
+        }
+
+        try {
+            value = sc.nextBigDecimal();
+        } catch (Exception e) {
+            System.out.println("✖ Invalid component value - must be a BigDecimal");
+            sc.nextLine();
+            return;
+        }
+
+        graph.addVertex(source);
+        graph.addVertex(target);
+        Edge e = graph.addEdge(source, target);
+        e.setName(name);
+        e.setComponentType(type);
+        e.setValue(value);
+        System.out.println("✓ New connection made.");
+    }
 
     // returns null if the pattern couldn't be matched
     private static Integer parseUserInput(Pattern p) {
