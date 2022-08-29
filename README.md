@@ -12,8 +12,9 @@
 # Features
 - Supported component types: Current Source, Resistor, Conductor
 - The program can validate the graph and automatically remove floating nodals.
-- For calculation the network graph is transformed to a system of linear equations, which can be printed.
+- Print the SLE
 - Multiple connections between two nodals are allowed.
+- Unlimited nodals
 
 # Technical Keypoints
 - Temurin 16 JDK

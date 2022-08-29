@@ -1,15 +1,14 @@
 package org.jajaho.util;
 
-import org.jajaho.data.Component;
 import org.jajaho.data.CircuitGraph;
+import org.jajaho.data.Component;
 import org.jajaho.data.Edge;
 
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-import static org.jajaho.main.Main.*;
+import static org.jajaho.data.GlobalPattens.*;
 
 public class GraphUtil {
     public static boolean validateGraph(CircuitGraph graph, Scanner sc) {
