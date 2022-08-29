@@ -4,19 +4,33 @@ import org.jajaho.data.*;
 import org.jajaho.util.GraphUtil;
 import org.jajaho.util.MathUtil;
 import org.jajaho.util.ReadUtil;
+import picocli.CommandLine;
 
 import java.math.BigDecimal;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
 import static org.jajaho.data.GlobalPattens.*;
 
-public class Main {
+@CommandLine.Command(
+        name = "nacli",
+        description = "Says hello",
+        version = "nacli 0.1.0",
+        mixinStandardHelpOptions = true
+)
+
+public class Main implements Callable<Integer> {
 
     // Global Terminal Scanner
     static Scanner tScan = new Scanner(System.in);
 
     public static void main(String[] args) {
+        int exitCode = new CommandLine(new Main()).execute(args);
+        System.exit(exitCode);
+    }
+
+    public void mainInterface() {
         CircuitGraph graph = new CircuitGraph(Edge.class);
 
         printStartupMsg();
@@ -108,6 +122,12 @@ public class Main {
 
             tScan.nextLine();
         }
+    }
+
+    @Override
+    public Integer call() throws Exception { // your business logic goes here...
+        mainInterface();
+        return 0;
     }
 
     private static void printStartupMsg() {

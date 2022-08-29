@@ -14,13 +14,15 @@ public class Edge extends DefaultEdge {
         System.out.println("      " + name);
         System.out.print("(" + getSource() + ")---");
         switch (componentType) {
-            case R, G -> {
+            case R:
+            case G:
                 System.out.print("[__]");
-            }
-            case I -> {
+                break;
+            case I:
                 System.out.print("(->)");
-            }
-            default -> System.out.print("????");
+                break;
+            default:
+                System.out.print("????");
         }
         System.out.println("---(" + getTarget() + ")");
         System.out.println("      " + value.toEngineeringString());

@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.palantir.graal' version '0.12.0'
 }
 
 group 'org.jajaho2'
@@ -21,9 +22,24 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-jdk1.5
     implementation group: 'org.jgrapht', name: 'jgrapht-jdk1.5', version: '0.7.3'
 
+    // https://mvnrepository.com/artifact/info.picocli/picocli
+    implementation group: 'info.picocli', name: 'picocli', version: '4.6.3'
 
 }
 
 test {
     useJUnitPlatform()
+}
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    options.compilerArgs += ["-Aproject=${project.name}"]
+}
+
+graal {
+    mainClass 'org.jajaho.main.Main'
+    outputName 'nacli'
+    javaVersion '11'
+    windowsVsVarsPath 'C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat'
 }

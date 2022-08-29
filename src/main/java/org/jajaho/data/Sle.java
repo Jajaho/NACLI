@@ -32,7 +32,7 @@ public class Sle {
             for (Edge edge : graph.edgesOf(vertex)) {
 
                 switch (graph.getEdgeType(edge)) {
-                    case I -> {
+                    case I:
                         Integer targetV = graph.getEdgeTarget(edge);
                         Integer sourceV = graph.getEdgeTarget(edge);
                         // If current source is flowing into the nodal
@@ -42,15 +42,16 @@ public class Sle {
                             if (!graph.getEdgeSource(edge).equals(0))
                                 b[sourceV - 1] = b[targetV - 1].subtract(edge.getValue());      // out of
                         }
-                    }
-                    case R -> {
+                        break;
+                    case R:
                         BigDecimal g = new BigDecimal("1").divide(edge.getValue());
                         addConductanceToMatrix(a, vertex, graph.getOppositeOf(vertex, edge), g);
-                    }
-                    case G -> {
+                        break;
+                    case G:
                         addConductanceToMatrix(a, vertex, graph.getOppositeOf(vertex, edge), edge.getValue());
-                    }
-                    default -> System.out.println("Component not supported.");
+                        break;
+                    default:
+                        System.out.println("Component not supported.");
                 }
             }
         }
