@@ -24,6 +24,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/info.picocli/picocli
     implementation group: 'info.picocli', name: 'picocli', version: '4.6.3'
+    annotationProcessor 'info.picocli:picocli-codegen:4.6.3'
 
 }
 
@@ -42,4 +43,5 @@ graal {
     outputName 'nacli'
     javaVersion '11'
     windowsVsVarsPath 'C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat'
+    option '--no-fallback'
 }

@@ -17,8 +17,10 @@
 - Unlimited nodals
 
 # Technical Keypoints
-- Temurin 16 JDK
-- Gradle for dependency management
+- GraalVM 11 JDK
+- GraalVM 20.02 compiler
+- Picocli
+- Gradle 7.1 for dependency management
 - Customised JGraphT library
 - Precise component values through BigDecimal
 - Custom MathUtil.java

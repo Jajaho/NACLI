@@ -49,7 +49,7 @@ public class Main implements Callable<Integer> {
             if (tScan.hasNext(calculate)) {         // Calculate
                 tScan.next(calculate);
                 if (!GraphUtil.validateGraph(graph, tScan)) {
-                    System.out.println("✖ Network invalid - calculation aborted.");
+                    System.out.println("Network invalid - calculation aborted.");
                     tScan.nextLine();
                     continue;
                 }
@@ -58,7 +58,7 @@ public class Main implements Callable<Integer> {
 
                 // Post conversion validation
                 if (!MathUtil.isAxisSymmetric(sle.getA())) {
-                    System.out.println("✖ Matrix is not symmetric - calculation aborted.");
+                    System.out.println("Matrix is not symmetric - calculation aborted.");
                     tScan.nextLine();
                     continue;
                 }
@@ -82,7 +82,7 @@ public class Main implements Callable<Integer> {
                 try {
                     name = tScan.next(namePatStr);
                 } catch (Exception e) {
-                    System.out.println("✖ Invalid component name - must be f.e. R1");
+                    System.out.println("Invalid component name - must be f.e. R1");
                     tScan.nextLine();
                     continue;
                 }
@@ -98,7 +98,7 @@ public class Main implements Callable<Integer> {
                             if (tScan.hasNext(yes)) {
                                 tScan.next(yes);
                                 graph.removeEdge(e);
-                                System.out.println("✓ Edge removed.");
+                                System.out.println("Edge removed.");
                                 break;
                             }
                             if (tScan.hasNext(no)) {
@@ -113,7 +113,7 @@ public class Main implements Callable<Integer> {
                 // If an edge has been found and a decision has been made by the user the while loop is broken and the
                 // text below has to be skipped.
                 if (!found)
-                    System.out.println("✖ Component not found.");
+                    System.out.println("Component not found.");
             }
 
             if (tScan.hasNext(read)) {      // read file
@@ -158,13 +158,13 @@ public class Main implements Callable<Integer> {
         try {
             name = sc.next(namePatStr);
             if (!GraphUtil.isUniqueName(graph, name)) {
-                System.out.println("✖ Component name is not unique.");
+                System.out.println("Component name is not unique.");
                 sc.nextLine();
                 return;
             }
             type = Component.valueOf(name.substring(0, 1));
         } catch (Exception e) {
-            System.out.println("✖ Invalid component name - must be f.e. R1");
+            System.out.println("Invalid component name - must be f.e. R1");
             sc.nextLine();
             return;
         }
@@ -172,7 +172,7 @@ public class Main implements Callable<Integer> {
         try {
             source = Integer.parseInt(sc.next(intPatStr));
         } catch (Exception e) {
-            System.out.println("✖ Invalid source vertex - must be a positive integer.");
+            System.out.println("Invalid source vertex - must be a positive integer.");
             sc.nextLine();
             return;
         }
@@ -180,7 +180,7 @@ public class Main implements Callable<Integer> {
         try {
             target = Integer.parseInt(sc.next(intPatStr));
         } catch (Exception e) {
-            System.out.println("✖ Invalid target vertex - must be an integer.");
+            System.out.println("Invalid target vertex - must be an integer.");
             sc.nextLine();
             return;
         }
@@ -188,7 +188,7 @@ public class Main implements Callable<Integer> {
         try {
             value = sc.nextBigDecimal();
         } catch (Exception e) {
-            System.out.println("✖ Invalid component value - must be a BigDecimal");
+            System.out.println("Invalid component value - must be a BigDecimal");
             sc.nextLine();
             return;
         }
@@ -199,7 +199,7 @@ public class Main implements Callable<Integer> {
         e.setName(name);
         e.setComponentType(type);
         e.setValue(value);
-        System.out.println("✓ New connection made.");
+        System.out.println("New connection made.");
     }
 
     // returns null if the pattern couldn't be matched
