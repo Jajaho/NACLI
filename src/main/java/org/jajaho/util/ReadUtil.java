@@ -3,10 +3,7 @@ package org.jajaho.util;
 import org.jajaho.data.CircuitGraph;
 import org.jajaho.main.Main;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Scanner;
 
 public class ReadUtil {

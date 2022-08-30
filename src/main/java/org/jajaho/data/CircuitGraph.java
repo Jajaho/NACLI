@@ -1,10 +1,6 @@
 package org.jajaho.data;
 
-import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.Pseudograph;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class CircuitGraph extends Pseudograph<Integer, Edge> {
 
@@ -42,34 +38,5 @@ public class CircuitGraph extends Pseudograph<Integer, Edge> {
         if (getEdgeSource(edge).equals(vertex))
             return getEdgeTarget(edge);
         return null;
-    }
-
-    public Set<Integer> getAcyclicVertices() {
-        CycleDetector cDetect = new CycleDetector(this);
-        Set<Integer> set = new HashSet<>();
-
-        for (Integer vertex : vertexSet()) {
-            if (!cDetect.detectCyclesContainingVertex(vertex)) {
-                set.add(vertex);
-            }
-        }
-        return set;
-    }
-
-    // AbstractBaseGraph uses private IntrusiveEdgesSpecifics to set/get EdgeWeight
-    public void setEdgeType(Edge e, Component type) {
-        if (e == null) {
-            throw new NullPointerException();
-        } else {
-            e.setComponentType(type);
-        }
-    }
-
-    public Component getEdgeType(Edge e) {
-        if (e == null) {
-            throw new NullPointerException();
-        } else {
-            return e.getComponentType();
-        }
     }
 }

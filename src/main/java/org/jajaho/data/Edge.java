@@ -9,6 +9,8 @@ public class Edge extends DefaultEdge {
     private BigDecimal value;
     private Component componentType;
 
+    public Edge() {}
+
     // TODO - Ensure correct format for longer vertices
     public void printArt() {
         System.out.println("      " + name);

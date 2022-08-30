@@ -16,7 +16,7 @@ public class GraphUtil {
         int i = 0;
 
         // TODO - Check whether graph is empty
-        test[i++] = checkForSelfLoops(graph,sc);
+        test[i++] = checkForSelfLoops(graph, sc);
         test[i++] = checkForFloatingVertices(graph, sc);
         test[i++] = checkHasSource(graph);
 
@@ -124,7 +124,7 @@ public class GraphUtil {
 
     private static boolean checkHasSource(CircuitGraph graph) {
         for (Edge edge : graph.edgeSet()) {
-            if (graph.getEdgeType(edge).equals(Component.I) || graph.getEdgeType(edge).equals(Component.U))
+            if (edge.getComponentType().equals(Component.I) || edge.getComponentType().equals(Component.U))
                 System.out.println("Network has a valid source.");
             return true;
         }

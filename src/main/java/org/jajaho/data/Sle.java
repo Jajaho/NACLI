@@ -31,7 +31,7 @@ public class Sle {
                 continue;
             for (Edge edge : graph.edgesOf(vertex)) {
 
-                switch (graph.getEdgeType(edge)) {
+                switch (edge.getComponentType()) {
                     case I:
                         Integer targetV = graph.getEdgeTarget(edge);
                         Integer sourceV = graph.getEdgeTarget(edge);
