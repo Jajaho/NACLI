@@ -4,39 +4,50 @@ import org.jajaho.data.*;
 import org.jajaho.util.GraphUtil;
 import org.jajaho.util.MathUtil;
 import org.jajaho.util.ReadUtil;
+import picocli.CommandLine;
 
 import java.math.BigDecimal;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
 import static org.jajaho.data.GlobalPattens.*;
 
-public class Main {
+@CommandLine.Command(
+        name = "nacli",
+        description = "Says hello",
+        version = "nacli 0.1.0",
+        mixinStandardHelpOptions = true
+)
+public class Main implements Callable<Integer> {
 
     // Global Terminal Scanner
     static Scanner tScan = new Scanner(System.in);
 
     public static void main(String[] args) {
+        int exitCode = new CommandLine(new Main()).execute(args);
+        System.exit(exitCode);
+    }
+
+    public void mainInterface() {
         CircuitGraph graph = new CircuitGraph(Edge.class);
 
         printStartupMsg();
-
-        while (true) {
-            if (tScan.hasNext(esc)) {       // Escape
-                tScan.next(esc);
+        
+        String input;
+        while ((input = tScan.nextLine()) != null) {
+            if (input.matches(esc.pattern())) {       // Escape
                 System.exit(1);
             }
 
-            if (tScan.hasNext(validate)) {      // Validate
-                tScan.next(validate);
+            if (input.matches(validate.pattern())) {      // Validate
                 GraphUtil.validateGraph(graph, tScan);
+                continue;
             }
 
-            if (tScan.hasNext(calculate)) {         // Calculate
-                tScan.next(calculate);
+            if (input.matches(calculate.pattern())) {         // Calculate
                 if (!GraphUtil.validateGraph(graph, tScan)) {
-                    System.out.println("✖ Network invalid - calculation aborted.");
-                    tScan.nextLine();
+                    System.out.println("Network invalid - calculation aborted.");
                     continue;
                 }
                 Sle sle = new Sle(graph);
@@ -44,8 +55,7 @@ public class Main {
 
                 // Post conversion validation
                 if (!MathUtil.isAxisSymmetric(sle.getA())) {
-                    System.out.println("✖ Matrix is not symmetric - calculation aborted.");
-                    tScan.nextLine();
+                    System.out.println("Matrix is not symmetric - calculation aborted.");
                     continue;
                 }
                 BigDecimal[] phis = sle.solve();
@@ -55,21 +65,22 @@ public class Main {
                 }
             }
 
-            if (tScan.hasNext(add)) {       // Add edge
-                tScan.next(add);
-                parseEdge(tScan, graph);
+            if (input.matches(add.pattern())) {       // Add edge
+                Scanner lineScanner = new Scanner(input);
+                lineScanner.next(); // Skip the "add" command
+                parseEdge(lineScanner, graph);
             }
 
-            if (tScan.hasNext(remove)) {     // remove edge
-                tScan.next(remove);
+            if (input.matches(remove.pattern())) {     // remove edge
+                Scanner lineScanner = new Scanner(input);
+                lineScanner.next(); // Skip the "rem" command
                 String name;
                 boolean found = false;
                 // check whether the input is syntactically correct
                 try {
-                    name = tScan.next(namePatStr);
+                    name = lineScanner.next(namePatStr);
                 } catch (Exception e) {
-                    System.out.println("✖ Invalid component name - must be f.e. R1");
-                    tScan.nextLine();
+                    System.out.println("Invalid component name - must be f.e. R1");
                     continue;
                 }
                 // search for the edge name in the graph
@@ -78,37 +89,38 @@ public class Main {
                         e.printArt();
                         System.out.println("Do you wish to delete it? (YES/NO)");
                         while (true) {
-                            if (tScan.hasNext(esc)) {
-                                System.exit(1);
-                            }
-                            if (tScan.hasNext(yes)) {
-                                tScan.next(yes);
+                            String response = tScan.nextLine().trim();
+                            if (response.matches(yes.pattern())) {
                                 graph.removeEdge(e);
-                                System.out.println("✓ Edge removed.");
+                                System.out.println("Edge removed.");
                                 break;
                             }
-                            if (tScan.hasNext(no)) {
-                                tScan.next(no);
+                            if (response.matches(no.pattern())) {
                                 break;
                             }
-                            tScan.nextLine();
                         }
                         found = true;
+                        break;
                     }
                 }
-                // If an edge has been found and a decision has been made by the user the while loop is broken and the
-                // text below has to be skipped.
-                if (!found)
-                    System.out.println("✖ Component not found.");
+                if (!found) {
+                    System.out.println("Component not found.");
+                }
             }
 
-            if (tScan.hasNext(read)) {      // read file
+            if (input.matches(read.pattern())) {      // read file
                 ReadUtil.read("C:\\Users\\Jakob\\Documents\\Git Repos\\NACLI\\testfiles\\netlist.cir", graph);
             }
-
-            tScan.nextLine();
         }
     }
+
+    @Override
+    public Integer call() throws Exception {
+        mainInterface();
+        return 0;
+    }
+
+}
 
     private static void printStartupMsg() {
         System.out.println("| \\ ||   /_\\   | __| ||    ||");
