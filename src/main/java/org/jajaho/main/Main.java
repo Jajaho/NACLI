@@ -65,7 +65,7 @@ public class Main implements Callable<Integer> {
                 }
             }
 
-            if (input.matches(add.pattern())) {       // Add edge
+            if (add.matcher(input).find()) {       // Add edge
                 Scanner lineScanner = new Scanner(input);
                 lineScanner.next(); // Skip the "add" command
                 parseEdge(lineScanner, graph);
@@ -120,7 +120,7 @@ public class Main implements Callable<Integer> {
         return 0;
     }
 
-}
+// }
 
     private static void printStartupMsg() {
         System.out.println("| \\ ||   /_\\   | __| ||    ||");
