@@ -178,6 +178,7 @@ public class Main implements Callable<Integer> {
         System.out.println();
         System.out.println("Type:");
         System.out.println("esc - exit the program");
+        System.out.println("rem - remove component");
         System.out.println("val - validate the graph");
         System.out.println("calc - calculate the solution");
     }
