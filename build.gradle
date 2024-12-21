@@ -1,9 +1,15 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'org.jajaho2'
 version '1.0-SNAPSHOT'
+
+// Configure the application plugin
+application {
+    mainClass.set('org.jajaho.main.Main')
+}
 
 repositories {
     mavenCentral()
@@ -28,6 +34,22 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'org.jajaho.main.Main'
+        )
+    }
+
+    // Include all dependencies in the JAR
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    
+    // Exclude META-INF signatures to avoid conflicts
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.withType(JavaCompile) {
