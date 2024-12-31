@@ -8,7 +8,10 @@
     888    Y888 d88P     888  "Y8888P"  88888888 8888888 
     
     Nodal Analysis Command Line Interface by Jakob Holz 
-  
+
+[![Static Badge](https://img.shields.io/badge/GitHub-NACLI-2ea44f?style=flat&logo=github)](https://github.com/Jajaho/NACLI)
+
+
 # Features
 - Supported component types: Current Source, Resistor, Conductor
 - The program can validate the graph and automatically detect and remove floating nodals
@@ -24,13 +27,13 @@
 - Precise component values through BigDecimal
 - Custom MathUtil implementation
 
-# Prerequisites
-1. Install Java Development Kit (JDK) 21
-   - Download from [Oracle](https://www.oracle.com/java/technologies/downloads/#java21) or use your preferred OpenJDK distribution
-   - Set JAVA_HOME environment variable to point to your JDK installation
-   - Add Java's bin directory to your PATH
-
 # Building the Project
+
+## Prerequisites
+Install Java Development Kit (JDK) 21
+- Download from [Oracle](https://www.oracle.com/java/technologies/downloads/#java21) or use your preferred OpenJDK distribution
+- Set JAVA_HOME environment variable to point to your JDK installation
+- Add Java's bin directory to your PATH
 
 ## Building with Gradle
 ```bash
