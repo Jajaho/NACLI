@@ -173,14 +173,15 @@ public class Main implements Callable<Integer> {
         System.out.println("Construct the network by connecting nodals like this:");
         System.out.println("                  add R1 0 1 470");
         System.out.println("                      ^  ^ ^ ^");
-        System.out.println("       Source Nodal  _|  | | |_ Target Nodal");
-        System.out.println("         Component Type _| |_ Component Value");
+        System.out.println("      Component Type _|  | | |_ Component Value");
+        System.out.println("           Source Nodal _| |_ Target Nodal");
         System.out.println();
-        System.out.println("Type:");
-        System.out.println("esc - exit the program");
-        System.out.println("rem - remove component");
-        System.out.println("val - validate the graph");
-        System.out.println("calc - calculate the solution");
+        System.out.println("Command List:");
+        System.out.println("esc  - Exit Program");
+        System.out.println("add  - Add Component");
+        System.out.println("rem  - Remove Component");
+        System.out.println("val  - Validate Graph");
+        System.out.println("calc - Calculate Solution");
     }
 
     /**

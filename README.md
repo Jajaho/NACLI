@@ -15,17 +15,17 @@
 # Features
 - Supported component types: Current Source, Resistor, Conductor
 - The program can validate the graph and automatically detect and remove floating nodals
-- Print the SLE (System of Linear Equations)
 - Multiple connections between two nodals are allowed
 - Unlimited nodals (But Im running into trouble with limited precision for 4x4 determinants)
 
 # Technical Keypoints
+- Custom system validation & solver
 - Java 21
 - Picocli to enforce a standard command-line interface
 - Gradle for dependency management
 - JGraphT library for graph operations
 - Precise component values through BigDecimal
-- Custom MathUtil implementation
+
 
 # Building the Project
 
